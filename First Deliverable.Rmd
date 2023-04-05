@@ -8,10 +8,11 @@ output:
     toc_depth: 2 
     number_section: TRUE
     toc_float: TRUE
-    code_folding: show
+    code_folding: hide
     theme: united
-    highlight: tango
+    highlight: default
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
