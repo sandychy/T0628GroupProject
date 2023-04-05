@@ -1,4 +1,5 @@
 ---
+<<<<<<< HEAD
 title: "First Deliverable - Telco Customer Churn"
 author: "Sandy Yen"
 date: "2023-04-05"
@@ -11,6 +12,12 @@ output:
     code_folding: show
     theme: united
     highlight: tango
+=======
+title: "First Deliverable"
+author: "Sandy Yen"
+date: "2023-04-05"
+output: html_document
+>>>>>>> 5c201cd015dd68912409cb875bfc2ae6439859f4
 ---
 
 ```{r setup, include=FALSE}
