@@ -17,18 +17,105 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 # Datasets Exploration
 - We obtained a dataset from Kaggle that provides insights into the behavior of telecom customers regarding retention or churn. Each row represents a unique customer, and each column contains various attributes associated with that customer, such as gender, senior citizen status, partner status, dependents, tenure (number of months stayed with the company), phone service, multiple lines, internet service provider (DSL, Fiber optic, No), online security, online backup, device protection, tech support, streaming TV, streaming movies, contract term (Month-to-month, One year, Two year), paperless billing, payment method (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)), monthly charges, total charges, and churn status.
+
+## Content
+- Each row represents a customer, each column contains customer’s attributes described on the column Metadata.
+- The data set includes information about:
+    + Customers who left within the last month – the column is called Churn
+    + Services that each customer has signed up for – phone, multiple lines, internet, online security, online
+    backup, device protection, tech support, and streaming TV and movies
+    + Customer account information – how long they’ve been a customer, contract, payment method, paperless
+    billing, monthly charges, and total charges
+    + Demographic info about customers – gender, age range, and if they have partners and dependents
 
 # Business Case and Analysis Overview
 
 # Preliminary Exploration And Data Cleaning 
+## get data
 ```{r}
-churn <- read.csv("Telco Customer Churn.csv")
-str(churn)
-summary(churn)
+data <- read.csv("Telco Customer Churn.csv")
+str(data)
+#summary(data)
+#View(data)
 ```
+
+## clean data
+```{r}
+colSums(is.na(data))
+```
+
+```{r}
+mean_TotalCharges = mean(data$TotalCharges, na.rm = TRUE)
+data$TotalCharges = ifelse(is.na(data$TotalCharges), mean_TotalCharges, data$TotalCharges)
+colSums(is.na(data))
+```
+
+```{r}
+data$gender <- as.factor(data$gender)
+data$Partner <- as.factor(data$Partner)
+data$Dependents <- as.factor(data$Dependents)
+data$PhoneService <- as.factor(data$PhoneService)
+data$MultipleLines <- as.factor(data$MultipleLines)
+data$InternetService <- as.factor(data$InternetService)
+data$OnlineSecurity <- as.factor(data$OnlineSecurity)
+data$OnlineBackup <- as.factor(data$OnlineBackup)
+data$DeviceProtection <- as.factor(data$DeviceProtection)
+data$TechSupport <- as.factor(data$TechSupport)
+data$StreamingTV <- as.factor(data$StreamingTV)
+data$StreamingMovies <- as.factor(data$StreamingMovies)
+data$Contract <- as.factor(data$Contract)
+data$PaperlessBilling <- as.factor(data$PaperlessBilling)
+data$PaymentMethod <- as.factor(data$PaymentMethod)
+data$Churn <- as.factor(data$Churn)
+data$customerID <- NULL
+```
+
+```{r}
+str(data)
+summary(data)
+#View(data)
+```
+
+## split train and test
+```{r}
+set.seed(12345)
+test_rows <- sample(1:nrow(data), 0.25*nrow(data)) 
+
+data_test <- data[test_rows, ]
+data_train <- data[-test_rows, ]
+```
+
+## train model
+```{r}
+base_model <- glm(Churn ~ ., data = data_train, family = "binomial")
+summary(base_model)
+```
+
+## predict for specific cases
+```{r}
+data_pred <- predict(base_model, data_test, type = "response")
+summary(data_pred)
+```
+
+```{r}
+churn_binary_pred <- ifelse(data_pred >= 0.5, "Yes", "No")
+table(churn_binary_pred)
+```
+
+```{r}
+#levels(data_test$Churn)
+#levels(churn_binary_pred)
+
+```
+
+## evaluate model
+```{r}
+library(caret)
+confusionMatrix(as.factor(churn_binary_pred), data_test$Churn, positive = "Yes")
+```
+
 # Explanatory Power of the Data with a Preliminary Regression Model
 
 
