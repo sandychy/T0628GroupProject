@@ -17,9 +17,18 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 # Datasets Exploration
 - We obtained a dataset from Kaggle that provides insights into the behavior of telecom customers regarding retention or churn. Each row represents a unique customer, and each column contains various attributes associated with that customer, such as gender, senior citizen status, partner status, dependents, tenure (number of months stayed with the company), phone service, multiple lines, internet service provider (DSL, Fiber optic, No), online security, online backup, device protection, tech support, streaming TV, streaming movies, contract term (Month-to-month, One year, Two year), paperless billing, payment method (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)), monthly charges, total charges, and churn status.
+
+## Content
+- Each row represents a customer, each column contains customer’s attributes described on the column Metadata.
+- The data set includes information about:
+    + Customers who left within the last month – the column is called Churn
+    + Services that each customer has signed up for – phone, multiple lines, internet, online security, online
+    backup, device protection, tech support, and streaming TV and movies
+    + Customer account information – how long they’ve been a customer, contract, payment method, paperless
+    billing, monthly charges, and total charges
+    + Demographic info about customers – gender, age range, and if they have partners and dependents
 
 # Business Case and Analysis Overview
 
