@@ -1,5 +1,5 @@
 ---
-title: "First Deliverable - Telco Customer Churn"
+title: "Group 7 First Deliverable - Telco Customer Churn"
 author: "Sandy Yen"
 date: "2023-04-05"
 output: 
@@ -13,18 +13,20 @@ output:
     highlight: default
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Datasets Exploration
+- We obtained a dataset from Kaggle that provides insights into the behavior of telecom customers regarding retention or churn. Each row represents a unique customer, and each column contains various attributes associated with that customer, such as gender, senior citizen status, partner status, dependents, tenure (number of months stayed with the company), phone service, multiple lines, internet service provider (DSL, Fiber optic, No), online security, online backup, device protection, tech support, streaming TV, streaming movies, contract term (Month-to-month, One year, Two year), paperless billing, payment method (Electronic check, Mailed check, Bank transfer (automatic), Credit card (automatic)), monthly charges, total charges, and churn status.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# Business Case and Analysis Overview
 
-```{r cars}
-summary(cars)
+# Preliminary Exploration And Data Cleaning 
+```{r}
+churn <- read.csv("Telco Customer Churn.csv")
+str(churn)
+summary(churn)
 ```
-
+# Explanatory Power of the Data with a Preliminary Regression Model

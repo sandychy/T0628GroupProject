@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-04-05" />
 
-<title>First Deliverable - Telco Customer Churn</title>
+<title>Group 7 First Deliverable - Telco Customer Churn</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1579,7 +1579,7 @@ border-radius: 0px;
 
 
 
-<h1 class="title toc-ignore">First Deliverable - Telco Customer
+<h1 class="title toc-ignore">Group 7 First Deliverable - Telco Customer
 Churn</h1>
 <h4 class="author">Sandy Yen</h4>
 <h4 class="date">2023-04-05</h4>
@@ -1587,23 +1587,107 @@ Churn</h1>
 </div>
 
 
-<div id="r-markdown" class="section level2" number="0.1">
-<h2><span class="header-section-number">0.1</span> R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting
-syntax for authoring HTML, PDF, and MS Word documents. For more details
-on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be
-generated that includes both content as well as the output of any
-embedded R code chunks within the document. You can embed an R code
-chunk like this:</p>
-<pre class="r"><code>summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
+<div id="datasets-exploration" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Datasets
+Exploration</h1>
+<ul>
+<li>We obtained a dataset from Kaggle that provides insights into the
+behavior of telecom customers regarding retention or churn. Each row
+represents a unique customer, and each column contains various
+attributes associated with that customer, such as gender, senior citizen
+status, partner status, dependents, tenure (number of months stayed with
+the company), phone service, multiple lines, internet service provider
+(DSL, Fiber optic, No), online security, online backup, device
+protection, tech support, streaming TV, streaming movies, contract term
+(Month-to-month, One year, Two year), paperless billing, payment method
+(Electronic check, Mailed check, Bank transfer (automatic), Credit card
+(automatic)), monthly charges, total charges, and churn status.</li>
+</ul>
+</div>
+<div id="business-case-and-analysis-overview" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Business Case and
+Analysis Overview</h1>
+</div>
+<div id="preliminary-exploration-and-data-cleaning" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Preliminary Exploration
+And Data Cleaning</h1>
+<pre class="r"><code>churn &lt;- read.csv(&quot;Telco Customer Churn.csv&quot;)
+str(churn)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    7043 obs. of  21 variables:
+##  $ customerID      : chr  &quot;7590-VHVEG&quot; &quot;5575-GNVDE&quot; &quot;3668-QPYBK&quot; &quot;7795-CFOCW&quot; ...
+##  $ gender          : chr  &quot;Female&quot; &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; ...
+##  $ SeniorCitizen   : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Partner         : chr  &quot;Yes&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ Dependents      : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ tenure          : int  1 34 2 45 2 8 22 10 28 62 ...
+##  $ PhoneService    : chr  &quot;No&quot; &quot;Yes&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ MultipleLines   : chr  &quot;No phone service&quot; &quot;No&quot; &quot;No&quot; &quot;No phone service&quot; ...
+##  $ InternetService : chr  &quot;DSL&quot; &quot;DSL&quot; &quot;DSL&quot; &quot;DSL&quot; ...
+##  $ OnlineSecurity  : chr  &quot;No&quot; &quot;Yes&quot; &quot;Yes&quot; &quot;Yes&quot; ...
+##  $ OnlineBackup    : chr  &quot;Yes&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ DeviceProtection: chr  &quot;No&quot; &quot;Yes&quot; &quot;No&quot; &quot;Yes&quot; ...
+##  $ TechSupport     : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;Yes&quot; ...
+##  $ StreamingTV     : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ StreamingMovies : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ Contract        : chr  &quot;Month-to-month&quot; &quot;One year&quot; &quot;Month-to-month&quot; &quot;One year&quot; ...
+##  $ PaperlessBilling: chr  &quot;Yes&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ PaymentMethod   : chr  &quot;Electronic check&quot; &quot;Mailed check&quot; &quot;Mailed check&quot; &quot;Bank transfer (automatic)&quot; ...
+##  $ MonthlyCharges  : num  29.9 57 53.9 42.3 70.7 ...
+##  $ TotalCharges    : num  29.9 1889.5 108.2 1840.8 151.7 ...
+##  $ Churn           : chr  &quot;No&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...</code></pre>
+<pre class="r"><code>summary(churn)</code></pre>
+<pre><code>##   customerID           gender          SeniorCitizen      Partner         
+##  Length:7043        Length:7043        Min.   :0.0000   Length:7043       
+##  Class :character   Class :character   1st Qu.:0.0000   Class :character  
+##  Mode  :character   Mode  :character   Median :0.0000   Mode  :character  
+##                                        Mean   :0.1621                     
+##                                        3rd Qu.:0.0000                     
+##                                        Max.   :1.0000                     
+##                                                                           
+##   Dependents            tenure      PhoneService       MultipleLines     
+##  Length:7043        Min.   : 0.00   Length:7043        Length:7043       
+##  Class :character   1st Qu.: 9.00   Class :character   Class :character  
+##  Mode  :character   Median :29.00   Mode  :character   Mode  :character  
+##                     Mean   :32.37                                        
+##                     3rd Qu.:55.00                                        
+##                     Max.   :72.00                                        
+##                                                                          
+##  InternetService    OnlineSecurity     OnlineBackup       DeviceProtection  
+##  Length:7043        Length:7043        Length:7043        Length:7043       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##  TechSupport        StreamingTV        StreamingMovies      Contract        
+##  Length:7043        Length:7043        Length:7043        Length:7043       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##  PaperlessBilling   PaymentMethod      MonthlyCharges    TotalCharges   
+##  Length:7043        Length:7043        Min.   : 18.25   Min.   :  18.8  
+##  Class :character   Class :character   1st Qu.: 35.50   1st Qu.: 401.4  
+##  Mode  :character   Mode  :character   Median : 70.35   Median :1397.5  
+##                                        Mean   : 64.76   Mean   :2283.3  
+##                                        3rd Qu.: 89.85   3rd Qu.:3794.7  
+##                                        Max.   :118.75   Max.   :8684.8  
+##                                                         NA&#39;s   :11      
+##     Churn          
+##  Length:7043       
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+##                    
+## </code></pre>
+</div>
+<div id="explanatory-power-of-the-data-with-a-preliminary-regression-model" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Explanatory Power of
+the Data with a Preliminary Regression Model</h1>
 </div>
 
 
