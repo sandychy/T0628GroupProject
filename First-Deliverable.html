@@ -9,11 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Sandy Yen" />
+<meta name="author" content="Group 7: Tzu-Yu Ko, Yeonji Kim, Jake Liang, Srihari Katari Srinivasula, Sandy Yen" />
 
 <meta name="date" content="2023-04-05" />
 
-<title>Group 7 First Deliverable - Telco Customer Churn</title>
+<title>First Deliverable - Telco Customer Churn</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1579,35 +1579,45 @@ border-radius: 0px;
 
 
 
-<h1 class="title toc-ignore">Group 7 First Deliverable - Telco Customer
+<h1 class="title toc-ignore">First Deliverable - Telco Customer
 Churn</h1>
-<h4 class="author">Sandy Yen</h4>
+<h4 class="author">Group 7: Tzu-Yu Ko, Yeonji Kim, Jake Liang, Srihari
+Katari Srinivasula, Sandy Yen</h4>
 <h4 class="date">2023-04-05</h4>
 
 </div>
 
 
-<div id="datasets-exploration" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Datasets
+<div id="business-case-and-analysis-overview" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Business Case and
+Analysis Overview</h1>
+<ul>
+<li><p>Customer churn is a major challenge for telecom companies,
+impacting revenue and profitability. To address this challenge, telecom
+companies need to predict and prevent churn using machine learning
+models and churn analytics.</p></li>
+<li><p>Our goal is to explore how telecom companies can reduce churn by
+building accurate machine learning models and using churn analytics to
+identify customers at risk of churning, and take proactive measures to
+retain them.</p></li>
+</ul>
+</div>
+<div id="datasets-exploration" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Datasets
 Exploration</h1>
 <ul>
-<li>We obtained a dataset from Kaggle that provides insights into the
-behavior of telecom customers regarding retention or churn. Each row
-represents a unique customer, and each column contains various
-attributes associated with that customer, such as gender, senior citizen
-status, partner status, dependents, tenure (number of months stayed with
-the company), phone service, multiple lines, internet service provider
-(DSL, Fiber optic, No), online security, online backup, device
-protection, tech support, streaming TV, streaming movies, contract term
-(Month-to-month, One year, Two year), paperless billing, payment method
-(Electronic check, Mailed check, Bank transfer (automatic), Credit card
-(automatic)), monthly charges, total charges, and churn status.</li>
+<li>We will leverage a dataset (“Telco Customer Churn”) from Kaggle
+containing various attributes associated with each customer, including
+churn indicator, demographic information, account information, and
+services information. These variables serve as inputs for building a
+machine learning model to predict churn and develop retention
+strategies.</li>
 </ul>
-<div id="content" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Content</h2>
+<div id="content" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Content</h2>
 <ul>
-<li>Each row represents a customer, each column contains customer’s
-attributes described on the column Metadata.</li>
+<li>Each row represents a customer. In total, there are 7042
+observations and 21 variables.</li>
 <li>The data set includes information about:
 <ul>
 <li>Customers who left within the last month – the column is called
@@ -1624,15 +1634,11 @@ have partners and dependents</li>
 </ul>
 </div>
 </div>
-<div id="business-case-and-analysis-overview" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Business Case and
-Analysis Overview</h1>
-</div>
 <div id="preliminary-exploration-and-data-cleaning" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Preliminary Exploration
 And Data Cleaning</h1>
 <div id="get-data" class="section level2" number="3.1">
-<h2><span class="header-section-number">3.1</span> get data</h2>
+<h2><span class="header-section-number">3.1</span> Get Data</h2>
 <pre class="r"><code>data &lt;- read.csv(&quot;Telco Customer Churn.csv&quot;)
 str(data)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    7043 obs. of  21 variables:
@@ -1661,7 +1667,8 @@ str(data)</code></pre>
 #View(data)</code></pre>
 </div>
 <div id="clean-data" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> clean data</h2>
+<h2><span class="header-section-number">3.2</span> Clean Data</h2>
+<p>We checked if there is any data with NAs.</p>
 <pre class="r"><code>colSums(is.na(data))</code></pre>
 <pre><code>##       customerID           gender    SeniorCitizen          Partner 
 ##                0                0                0                0 
@@ -1675,9 +1682,12 @@ str(data)</code></pre>
 ##                0                0                0               11 
 ##            Churn 
 ##                0</code></pre>
-<pre class="r"><code>mean_TotalCharges = mean(data$TotalCharges, na.rm = TRUE)
-data$TotalCharges = ifelse(is.na(data$TotalCharges), mean_TotalCharges, data$TotalCharges)
-colSums(is.na(data))</code></pre>
+<p>It appeared that there are NAs in the ‘TotalCharges’ column. To
+handle NAs, we calculated the mean of the column and replaced NAs with
+the mean.</p>
+<pre class="r"><code>mean_TotalCharges = mean(data$TotalCharges, na.rm = TRUE) # Calculate the mean
+data$TotalCharges = ifelse(is.na(data$TotalCharges), mean_TotalCharges, data$TotalCharges) # If NA, replace it with the mean.
+colSums(is.na(data)) # Check for NAs</code></pre>
 <pre><code>##       customerID           gender    SeniorCitizen          Partner 
 ##                0                0                0                0 
 ##       Dependents           tenure     PhoneService    MultipleLines 
@@ -1690,6 +1700,8 @@ colSums(is.na(data))</code></pre>
 ##                0                0                0                0 
 ##            Churn 
 ##                0</code></pre>
+<p>Then, we factorized the data and overwrote them to the same
+colums.</p>
 <pre class="r"><code>data$gender &lt;- as.factor(data$gender)
 data$Partner &lt;- as.factor(data$Partner)
 data$Dependents &lt;- as.factor(data$Dependents)
@@ -1781,17 +1793,25 @@ data$customerID &lt;- NULL</code></pre>
 ##  Max.   :8684.8</code></pre>
 <pre class="r"><code>#View(data)</code></pre>
 </div>
-<div id="split-train-and-test" class="section level2" number="3.3">
-<h2><span class="header-section-number">3.3</span> split train and
-test</h2>
+</div>
+<div id="explanatory-power-of-the-data-with-a-preliminary-regression-model" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Explanatory Power of
+the Data with a Preliminary Regression Model</h1>
+<p>Before we go into deeper analysis, we examined the dataset with
+logistic regression to conduct a preliminary regression.</p>
+<div id="split-train-and-test" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Split Train and
+Test</h2>
+<p>Before training, we divided the dataset into test data (25%) and
+train data (75%).</p>
 <pre class="r"><code>set.seed(12345)
-test_rows &lt;- sample(1:nrow(data), 0.25*nrow(data)) 
+test_rows &lt;- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for testing, 75% will be used for training.
 
 data_test &lt;- data[test_rows, ]
 data_train &lt;- data[-test_rows, ]</code></pre>
 </div>
-<div id="train-model" class="section level2" number="3.4">
-<h2><span class="header-section-number">3.4</span> train model</h2>
+<div id="train-model" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Train Model</h2>
 <pre class="r"><code>base_model &lt;- glm(Churn ~ ., data = data_train, family = &quot;binomial&quot;)
 summary(base_model)</code></pre>
 <pre><code>## 
@@ -1845,16 +1865,27 @@ summary(base_model)</code></pre>
 ## AIC: 4430.3
 ## 
 ## Number of Fisher Scoring iterations: 6</code></pre>
+<p>We could find that the following columns and factors had significant
+effects:</p>
+<ul>
+<li>tenure column</li>
+<li>‘One year’ and ‘Two year’ factors for the Contract column</li>
+<li>‘Yes’ factor for the PaperlessBilling column</li>
+</ul>
 </div>
-<div id="predict-for-specific-cases" class="section level2" number="3.5">
-<h2><span class="header-section-number">3.5</span> predict for specific
-cases</h2>
+<div id="predict-for-specific-cases" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Predict for Specific
+Cases</h2>
+<p>To test how our model will work with new data, we used the predict
+function with our test dataset.</p>
 <pre class="r"><code>data_pred &lt;- predict(base_model, data_test, type = &quot;response&quot;)</code></pre>
 <pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
 ## prediction from a rank-deficient fit may be misleading</code></pre>
 <pre class="r"><code>summary(data_pred)</code></pre>
 <pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 ## 0.001407 0.044075 0.205610 0.270005 0.458217 0.857284</code></pre>
+<p>Then, we translated the predictions into binary, so that we can see
+it in “Yes” and “No”.</p>
 <pre class="r"><code>churn_binary_pred &lt;- ifelse(data_pred &gt;= 0.5, &quot;Yes&quot;, &quot;No&quot;)
 table(churn_binary_pred)</code></pre>
 <pre><code>## churn_binary_pred
@@ -1863,8 +1894,9 @@ table(churn_binary_pred)</code></pre>
 <pre class="r"><code>#levels(data_test$Churn)
 #levels(churn_binary_pred)</code></pre>
 </div>
-<div id="evaluate-model" class="section level2" number="3.6">
-<h2><span class="header-section-number">3.6</span> evaluate model</h2>
+<div id="evaluate-model" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> Evaluate Model</h2>
+<p>With the confusionMatrix, we evaluated our prediction.</p>
 <pre class="r"><code>library(caret)</code></pre>
 <pre><code>## Loading required package: ggplot2</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
@@ -1896,11 +1928,13 @@ table(churn_binary_pred)</code></pre>
 ##                                           
 ##        &#39;Positive&#39; Class : Yes             
 ## </code></pre>
+<p>The accuracy is <strong>80.28%</strong> and Kappa is
+<strong>0.4624</strong>. While the Kappa seems to be fine, the accuracy
+of the model can be improved with different analytical approaches. For
+next steps, we will try different methods to better predict the
+possibility of churn and what are the attributes that contribute to
+it.</p>
 </div>
-</div>
-<div id="explanatory-power-of-the-data-with-a-preliminary-regression-model" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Explanatory Power of
-the Data with a Preliminary Regression Model</h1>
 </div>
 <div id="link-to-github-repository" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Link to GitHub
