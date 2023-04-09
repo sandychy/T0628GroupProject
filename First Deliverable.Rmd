@@ -87,9 +87,15 @@ summary(data)
 #View(data)
 ```
 # Explanatory Power of the Data with a Preliminary Regression Model
+<<<<<<< HEAD
 
 Before we go into deeper analysis, we examined the dataset with logistic regression to conduct a preliminary regression.
 
+=======
+
+Before we go into deeper analysis, we examined the dataset with logistic regression to conduct a preliminary regression.
+
+>>>>>>> ee70f123792083d77847407c98f257872c9ac01f
 ## Split Train and Test
 
 Before training, we divided the dataset into test data (25%) and train data (75%).
@@ -111,10 +117,17 @@ We could find that the following columns and factors had significant effects:
 - tenure column
 - 'One year' and 'Two year' factors for the Contract column
 - 'Yes' factor for the PaperlessBilling column
+<<<<<<< HEAD
 
 
 ## Predict for Specific Cases
 
+=======
+
+
+## Predict for Specific Cases
+
+>>>>>>> ee70f123792083d77847407c98f257872c9ac01f
 To test how our model will work with new data, we used the predict function with our test dataset.
 ```{r}
 data_pred <- predict(base_model, data_test, type = "response")
