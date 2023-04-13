@@ -1,7 +1,7 @@
 ---
 title: "Predicting Customer Churn in Telecom Industry: A Machine Learning Approach"
 author: "Group 7: Tzu-Yu Ko, Yeonji Kim, Jake Liang, Srihari Katari Srinivasula, Sandy Yen"
-date: "2023-04-05"
+date: "2023-04-05 - intermediate deliverable"
 output: 
   html_document:
     toc: TRUE
@@ -34,29 +34,6 @@ knitr::opts_chunk$set(echo = TRUE)
     + Customer account information – how long they’ve been a customer, contract, payment method, paperless
     billing, monthly charges, and total charges
     + Demographic info about customers – gender, age range, and if they have partners and dependents
-- Variables Overview
-  + Gender
-  + Senior Citizen - whether the customer is a senior citizen
-  + Partner - whether the customer has a partner
-  + Dependents - whether the customer has dependents
-  + Tenure - Number of months the customer has stayed with the company
-  + Phone Service - whether the customer has a phone service
-  + Multiple Lines - whether the customer has multiple lines
-  + Internet Service - customer’s internet service provider (DSL, Fiber optic, No)
-  + Online Security - whether the customer has online security
-  + Online Backup - whether the customer has online backup
-  + Device Protection - whether the customer has device protection
-  + Tech Support - whether the customer has tech support
-  + Streaming TV - whether the customer has streaming TV
-  + Streaming Movies - whether the customer has streaming movies
-  + Contract - the contract term of the customer (Month-to-month, One year, Two year)
-  + Paperless Billing - whether the customer has paperless billing
-  + Payment Method - the customer’s payment method (Electronic check, Mailed check, Bank transfer (automatic), Credit
-  card (automatic))
-  + Monthly Charges - the amount charged to the customer monthly
-  + Total Charges - the total amount charged to the customer
-  + Churn - whether the customer churned
-
     
 
 # Preliminary Exploration And Data Cleaning 
@@ -99,6 +76,7 @@ data$StreamingMovies <- as.factor(data$StreamingMovies)
 data$Contract <- as.factor(data$Contract)
 data$PaperlessBilling <- as.factor(data$PaperlessBilling)
 data$PaymentMethod <- as.factor(data$PaymentMethod)
+data$Churn <- ifelse(data$Churn == "Yes", 1, 0)
 data$Churn <- as.factor(data$Churn)
 data$customerID <- NULL
 ```
@@ -115,16 +93,26 @@ Before we go into deeper analysis, we examined the dataset with logistic regress
 
 Before training, we divided the dataset into test data (25%) and train data (75%).
 ```{r}
+# Randomize the rows in the data (shuffling the rows)
 set.seed(12345)
-test_rows <- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for testing, 75% will be used for training.
 
-data_test <- data[test_rows, ]
-data_train <- data[-test_rows, ]
+test_set <- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for testing, 75% will be used for training.
+
+data_test <- data[test_set, ]
+data_train <- data[-test_set, ]
+
+#First the predictors - all columns except the Churn column
+data_train <- data[-test_set, -match("Churn",names(data))]
+data_test <- data[test_set, -match("Churn",names(data))]
+
+#Now the response (aka Labels) - only the Churn column
+data_train_labels <- data[-test_set, "Churn"]
+data_test_labels <- data[test_set, "Churn"]
 ```
 
-## Train Model
+## Train Model (Logistic Regression)
 ```{r}
-base_model <- glm(Churn ~ ., data = data_train, family = "binomial")
+base_model <- glm(data_train_labels ~ ., data = data_train, family = "binomial")
 summary(base_model)
 ```
 We could find that the following columns and factors had significant effects: 
@@ -142,7 +130,7 @@ summary(data_pred)
 
 Then, we translated the predictions into binary, so that we can see it in "Yes" and "No".
 ```{r}
-churn_binary_pred <- ifelse(data_pred >= 0.5, "Yes", "No")
+churn_binary_pred <- ifelse(data_pred >= 0.5, 1, 0)
 table(churn_binary_pred)
 ```
 
@@ -157,12 +145,11 @@ table(churn_binary_pred)
 With the confusionMatrix, we evaluated our prediction.
 ```{r}
 library(caret)
-confusionMatrix(as.factor(churn_binary_pred), data_test$Churn, positive = "Yes")
+confusionMatrix(as.factor(churn_binary_pred), as.factor(data_test_labels), positive = "1")
 ```
 The accuracy is **80.28%** and Kappa is **0.4624**. While the Kappa seems to be fine, the accuracy of the model can be improved with different analytical approaches. For next steps, we will try different methods to better predict the possibility of churn and what are the attributes that contribute to it.
 
 
 # Link to GitHub repository
 - https://github.com/sandychy/T0628GroupProject
-
 
