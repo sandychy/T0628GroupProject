@@ -11,7 +11,6 @@
 
 <meta name="author" content="Group 7: Tzu-Yu Ko, Yeonji Kim, Jake Liang, Srihari Katari Srinivasula, Sandy Yen" />
 
-<meta name="date" content="2023-04-05" />
 
 <title>Predicting Customer Churn in Telecom Industry: A Machine Learning Approach</title>
 
@@ -1583,7 +1582,7 @@ border-radius: 0px;
 Industry: A Machine Learning Approach</h1>
 <h4 class="author">Group 7: Tzu-Yu Ko, Yeonji Kim, Jake Liang, Srihari
 Katari Srinivasula, Sandy Yen</h4>
-<h4 class="date">2023-04-05</h4>
+<h4 class="date">2023-04-05 - intermediate deliverable</h4>
 
 </div>
 
@@ -1630,33 +1629,6 @@ contract, payment method, paperless billing, monthly charges, and total
 charges</li>
 <li>Demographic info about customers – gender, age range, and if they
 have partners and dependents</li>
-</ul></li>
-<li>Variables Overview
-<ul>
-<li>Gender</li>
-<li>Senior Citizen - whether the customer is a senior citizen</li>
-<li>Partner - whether the customer has a partner</li>
-<li>Dependents - whether the customer has dependents</li>
-<li>Tenure - Number of months the customer has stayed with the
-company</li>
-<li>Phone Service - whether the customer has a phone service</li>
-<li>Multiple Lines - whether the customer has multiple lines</li>
-<li>Internet Service - customer’s internet service provider (DSL, Fiber
-optic, No)</li>
-<li>Online Security - whether the customer has online security</li>
-<li>Online Backup - whether the customer has online backup</li>
-<li>Device Protection - whether the customer has device protection</li>
-<li>Tech Support - whether the customer has tech support</li>
-<li>Streaming TV - whether the customer has streaming TV</li>
-<li>Streaming Movies - whether the customer has streaming movies</li>
-<li>Contract - the contract term of the customer (Month-to-month, One
-year, Two year)</li>
-<li>Paperless Billing - whether the customer has paperless billing</li>
-<li>Payment Method - the customer’s payment method (Electronic check,
-Mailed check, Bank transfer (automatic), Credit card (automatic))</li>
-<li>Monthly Charges - the amount charged to the customer monthly</li>
-<li>Total Charges - the total amount charged to the customer</li>
-<li>Churn - whether the customer churned</li>
 </ul></li>
 </ul>
 </div>
@@ -1817,6 +1789,7 @@ data$StreamingMovies &lt;- as.factor(data$StreamingMovies)
 data$Contract &lt;- as.factor(data$Contract)
 data$PaperlessBilling &lt;- as.factor(data$PaperlessBilling)
 data$PaymentMethod &lt;- as.factor(data$PaymentMethod)
+data$Churn &lt;- ifelse(data$Churn == &quot;Yes&quot;, 1, 0)
 data$Churn &lt;- as.factor(data$Churn)
 data$Churn &lt;- ifelse(data$Churn==&quot;Yes&quot;, 1, 0)
 data$customerID &lt;- NULL</code></pre>
@@ -1841,7 +1814,11 @@ data$customerID &lt;- NULL</code></pre>
 ##  $ PaymentMethod   : Factor w/ 4 levels &quot;Bank transfer (automatic)&quot;,..: 3 4 4 1 3 3 2 4 3 1 ...
 ##  $ MonthlyCharges  : num  29.9 57 53.9 42.3 70.7 ...
 ##  $ TotalCharges    : num  29.9 1889.5 108.2 1840.8 151.7 ...
+<<<<<<< HEAD
 ##  $ Churn           : num  0 0 1 0 1 1 0 0 1 0 ...</code></pre>
+=======
+##  $ Churn           : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 2 1 2 2 1 1 2 1 ...</code></pre>
+>>>>>>> 5dbc54e3c6759dc9438ece50daa22a4551a271f5
 <pre class="r"><code>summary(data)</code></pre>
 <pre><code>##     gender     SeniorCitizen    Partner    Dependents     tenure     
 ##  Female:3488   Min.   :0.0000   No :3641   No :4933   Min.   : 0.00  
@@ -1885,6 +1862,7 @@ data$customerID &lt;- NULL</code></pre>
 ##                   Mailed check             :1612   Mean   : 64.76  
 ##                                                    3rd Qu.: 89.85  
 ##                                                    Max.   :118.75  
+<<<<<<< HEAD
 ##   TotalCharges        Churn       
 ##  Min.   :  18.8   Min.   :0.0000  
 ##  1st Qu.: 402.2   1st Qu.:0.0000  
@@ -1892,11 +1870,21 @@ data$customerID &lt;- NULL</code></pre>
 ##  Mean   :2283.3   Mean   :0.2654  
 ##  3rd Qu.:3786.6   3rd Qu.:1.0000  
 ##  Max.   :8684.8   Max.   :1.0000</code></pre>
+=======
+##   TotalCharges    Churn   
+##  Min.   :  18.8   0:5174  
+##  1st Qu.: 402.2   1:1869  
+##  Median :1400.5           
+##  Mean   :2283.3           
+##  3rd Qu.:3786.6           
+##  Max.   :8684.8</code></pre>
+>>>>>>> 5dbc54e3c6759dc9438ece50daa22a4551a271f5
 <pre class="r"><code>#View(data)</code></pre>
 </div>
 <div id="split-train-and-test" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Split Train and
 Test</h2>
+<<<<<<< HEAD
 <pre class="r"><code>set.seed(12345)
 test_rows &lt;- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for testing, 75% will be used for training.
 
@@ -1920,9 +1908,34 @@ Regression</h2>
 <h3><span class="header-section-number">6.1.1</span> Train Model</h3>
 <pre class="r"><code>lr_base_model &lt;- glm(Churn ~ ., data = data_train, family = &quot;binomial&quot;)
 summary(lr_base_model)</code></pre>
+=======
+<p>Before training, we divided the dataset into test data (25%) and
+train data (75%).</p>
+<pre class="r"><code># Randomize the rows in the data (shuffling the rows)
+set.seed(12345)
+
+test_set &lt;- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for testing, 75% will be used for training.
+
+data_test &lt;- data[test_set, ]
+data_train &lt;- data[-test_set, ]
+
+#First the predictors - all columns except the Churn column
+data_train &lt;- data[-test_set, -match(&quot;Churn&quot;,names(data))]
+data_test &lt;- data[test_set, -match(&quot;Churn&quot;,names(data))]
+
+#Now the response (aka Labels) - only the Churn column
+data_train_labels &lt;- data[-test_set, &quot;Churn&quot;]
+data_test_labels &lt;- data[test_set, &quot;Churn&quot;]</code></pre>
+</div>
+<div id="train-model-logistic-regression" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Train Model (Logistic
+Regression)</h2>
+<pre class="r"><code>base_model &lt;- glm(data_train_labels ~ ., data = data_train, family = &quot;binomial&quot;)
+summary(base_model)</code></pre>
+>>>>>>> 5dbc54e3c6759dc9438ece50daa22a4551a271f5
 <pre><code>## 
 ## Call:
-## glm(formula = Churn ~ ., family = &quot;binomial&quot;, data = data_train)
+## glm(formula = data_train_labels ~ ., family = &quot;binomial&quot;, data = data_train)
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
@@ -1991,9 +2004,15 @@ function with our test dataset.</p>
 ## 0.001407 0.044075 0.205610 0.270005 0.458217 0.857284</code></pre>
 <p>Then, we translated the predictions into binary, so that we can see
 it in “Yes” and “No”.</p>
+<<<<<<< HEAD
 <pre class="r"><code>lr_binary_pred &lt;- ifelse(lr_pred &gt;= 0.5, 1, 0)
 table(lr_binary_pred)</code></pre>
 <pre><code>## lr_binary_pred
+=======
+<pre class="r"><code>churn_binary_pred &lt;- ifelse(data_pred &gt;= 0.5, 1, 0)
+table(churn_binary_pred)</code></pre>
+<pre><code>## churn_binary_pred
+>>>>>>> 5dbc54e3c6759dc9438ece50daa22a4551a271f5
 ##    0    1 
 ## 1381  379</code></pre>
 <pre class="r"><code>#levels(data_test$Churn)
@@ -2006,7 +2025,11 @@ logistic regression model.</p>
 <pre class="r"><code>library(caret)</code></pre>
 <pre><code>## Loading required package: ggplot2</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
+<<<<<<< HEAD
 <pre class="r"><code>confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test$Churn), positive = &quot;1&quot;)</code></pre>
+=======
+<pre class="r"><code>confusionMatrix(as.factor(churn_binary_pred), as.factor(data_test_labels), positive = &quot;1&quot;)</code></pre>
+>>>>>>> 5dbc54e3c6759dc9438ece50daa22a4551a271f5
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
