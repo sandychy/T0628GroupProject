@@ -1661,11 +1661,18 @@ Mailed check, Bank transfer (automatic), Credit card (automatic))</li>
 </ul>
 </div>
 </div>
-<div id="preliminary-exploration-and-data-cleaning" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Preliminary Exploration
+<div id="link-to-github-repository" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Link to GitHub
+repository</h1>
+<ul>
+<li><a href="https://github.com/sandychy/T0628GroupProject" class="uri">https://github.com/sandychy/T0628GroupProject</a></li>
+</ul>
+</div>
+<div id="preliminary-exploration-and-data-cleaning" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Preliminary Exploration
 And Data Cleaning</h1>
-<div id="get-data" class="section level2" number="3.1">
-<h2><span class="header-section-number">3.1</span> Get Data</h2>
+<div id="get-data" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Get Data</h2>
 <pre class="r"><code>data &lt;- read.csv(&quot;Telco Customer Churn.csv&quot;)
 str(data)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    7043 obs. of  21 variables:
@@ -1693,8 +1700,8 @@ str(data)</code></pre>
 <pre class="r"><code>#summary(data)
 #View(data)</code></pre>
 </div>
-<div id="clean-data" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> Clean Data</h2>
+<div id="clean-data" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Clean Data</h2>
 <p>We checked if there is any data with NAs.</p>
 <pre class="r"><code>colSums(is.na(data))</code></pre>
 <pre><code>##       customerID           gender    SeniorCitizen          Partner 
@@ -1727,6 +1734,72 @@ colSums(is.na(data)) # Check for NAs</code></pre>
 ##                0                0                0                0 
 ##            Churn 
 ##                0</code></pre>
+<pre class="r"><code>str(data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    7043 obs. of  21 variables:
+##  $ customerID      : chr  &quot;7590-VHVEG&quot; &quot;5575-GNVDE&quot; &quot;3668-QPYBK&quot; &quot;7795-CFOCW&quot; ...
+##  $ gender          : chr  &quot;Female&quot; &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; ...
+##  $ SeniorCitizen   : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Partner         : chr  &quot;Yes&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ Dependents      : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ tenure          : int  1 34 2 45 2 8 22 10 28 62 ...
+##  $ PhoneService    : chr  &quot;No&quot; &quot;Yes&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ MultipleLines   : chr  &quot;No phone service&quot; &quot;No&quot; &quot;No&quot; &quot;No phone service&quot; ...
+##  $ InternetService : chr  &quot;DSL&quot; &quot;DSL&quot; &quot;DSL&quot; &quot;DSL&quot; ...
+##  $ OnlineSecurity  : chr  &quot;No&quot; &quot;Yes&quot; &quot;Yes&quot; &quot;Yes&quot; ...
+##  $ OnlineBackup    : chr  &quot;Yes&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ DeviceProtection: chr  &quot;No&quot; &quot;Yes&quot; &quot;No&quot; &quot;Yes&quot; ...
+##  $ TechSupport     : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;Yes&quot; ...
+##  $ StreamingTV     : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ StreamingMovies : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ Contract        : chr  &quot;Month-to-month&quot; &quot;One year&quot; &quot;Month-to-month&quot; &quot;One year&quot; ...
+##  $ PaperlessBilling: chr  &quot;Yes&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ PaymentMethod   : chr  &quot;Electronic check&quot; &quot;Mailed check&quot; &quot;Mailed check&quot; &quot;Bank transfer (automatic)&quot; ...
+##  $ MonthlyCharges  : num  29.9 57 53.9 42.3 70.7 ...
+##  $ TotalCharges    : num  29.9 1889.5 108.2 1840.8 151.7 ...
+##  $ Churn           : chr  &quot;No&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...</code></pre>
+<pre class="r"><code>summary(data)</code></pre>
+<pre><code>##   customerID           gender          SeniorCitizen      Partner         
+##  Length:7043        Length:7043        Min.   :0.0000   Length:7043       
+##  Class :character   Class :character   1st Qu.:0.0000   Class :character  
+##  Mode  :character   Mode  :character   Median :0.0000   Mode  :character  
+##                                        Mean   :0.1621                     
+##                                        3rd Qu.:0.0000                     
+##                                        Max.   :1.0000                     
+##   Dependents            tenure      PhoneService       MultipleLines     
+##  Length:7043        Min.   : 0.00   Length:7043        Length:7043       
+##  Class :character   1st Qu.: 9.00   Class :character   Class :character  
+##  Mode  :character   Median :29.00   Mode  :character   Mode  :character  
+##                     Mean   :32.37                                        
+##                     3rd Qu.:55.00                                        
+##                     Max.   :72.00                                        
+##  InternetService    OnlineSecurity     OnlineBackup       DeviceProtection  
+##  Length:7043        Length:7043        Length:7043        Length:7043       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##  TechSupport        StreamingTV        StreamingMovies      Contract        
+##  Length:7043        Length:7043        Length:7043        Length:7043       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##  PaperlessBilling   PaymentMethod      MonthlyCharges    TotalCharges   
+##  Length:7043        Length:7043        Min.   : 18.25   Min.   :  18.8  
+##  Class :character   Class :character   1st Qu.: 35.50   1st Qu.: 402.2  
+##  Mode  :character   Mode  :character   Median : 70.35   Median :1400.5  
+##                                        Mean   : 64.76   Mean   :2283.3  
+##                                        3rd Qu.: 89.85   3rd Qu.:3786.6  
+##                                        Max.   :118.75   Max.   :8684.8  
+##     Churn          
+##  Length:7043       
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+## </code></pre>
 <p>Then, we factorized the data and overwrote them to the same
 colums.</p>
 <pre class="r"><code>data$gender &lt;- as.factor(data$gender)
@@ -1745,6 +1818,7 @@ data$Contract &lt;- as.factor(data$Contract)
 data$PaperlessBilling &lt;- as.factor(data$PaperlessBilling)
 data$PaymentMethod &lt;- as.factor(data$PaymentMethod)
 data$Churn &lt;- as.factor(data$Churn)
+data$Churn &lt;- ifelse(data$Churn==&quot;Yes&quot;, 1, 0)
 data$customerID &lt;- NULL</code></pre>
 <pre class="r"><code>str(data)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    7043 obs. of  20 variables:
@@ -1767,7 +1841,7 @@ data$customerID &lt;- NULL</code></pre>
 ##  $ PaymentMethod   : Factor w/ 4 levels &quot;Bank transfer (automatic)&quot;,..: 3 4 4 1 3 3 2 4 3 1 ...
 ##  $ MonthlyCharges  : num  29.9 57 53.9 42.3 70.7 ...
 ##  $ TotalCharges    : num  29.9 1889.5 108.2 1840.8 151.7 ...
-##  $ Churn           : Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 1 2 1 2 2 1 1 2 1 ...</code></pre>
+##  $ Churn           : num  0 0 1 0 1 1 0 0 1 0 ...</code></pre>
 <pre class="r"><code>summary(data)</code></pre>
 <pre><code>##     gender     SeniorCitizen    Partner    Dependents     tenure     
 ##  Female:3488   Min.   :0.0000   No :3641   No :4933   Min.   : 0.00  
@@ -1811,36 +1885,41 @@ data$customerID &lt;- NULL</code></pre>
 ##                   Mailed check             :1612   Mean   : 64.76  
 ##                                                    3rd Qu.: 89.85  
 ##                                                    Max.   :118.75  
-##   TotalCharges    Churn     
-##  Min.   :  18.8   No :5174  
-##  1st Qu.: 402.2   Yes:1869  
-##  Median :1400.5             
-##  Mean   :2283.3             
-##  3rd Qu.:3786.6             
-##  Max.   :8684.8</code></pre>
+##   TotalCharges        Churn       
+##  Min.   :  18.8   Min.   :0.0000  
+##  1st Qu.: 402.2   1st Qu.:0.0000  
+##  Median :1400.5   Median :0.0000  
+##  Mean   :2283.3   Mean   :0.2654  
+##  3rd Qu.:3786.6   3rd Qu.:1.0000  
+##  Max.   :8684.8   Max.   :1.0000</code></pre>
 <pre class="r"><code>#View(data)</code></pre>
 </div>
-</div>
-<div id="explanatory-power-of-the-data-with-a-preliminary-regression-model" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Explanatory Power of
-the Data with a Preliminary Regression Model</h1>
-<p>Before we go into deeper analysis, we examined the dataset with
-logistic regression to conduct a preliminary regression.</p>
-<div id="split-train-and-test" class="section level2" number="4.1">
-<h2><span class="header-section-number">4.1</span> Split Train and
+<div id="split-train-and-test" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Split Train and
 Test</h2>
-<p>Before training, we divided the dataset into test data (25%) and
-train data (75%).</p>
 <pre class="r"><code>set.seed(12345)
 test_rows &lt;- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for testing, 75% will be used for training.
 
 data_test &lt;- data[test_rows, ]
 data_train &lt;- data[-test_rows, ]</code></pre>
+<p>Before training, we divided the dataset into test data (25%) and
+train data (75%).</p>
 </div>
-<div id="train-model" class="section level2" number="4.2">
-<h2><span class="header-section-number">4.2</span> Train Model</h2>
-<pre class="r"><code>base_model &lt;- glm(Churn ~ ., data = data_train, family = &quot;binomial&quot;)
-summary(base_model)</code></pre>
+</div>
+<div id="explanatory-power-of-the-data-with-a-preliminary-model" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Explanatory Power of
+the Data with a Preliminary Model</h1>
+</div>
+<div id="analysis-with-simple-models" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Analysis with Simple
+Models</h1>
+<div id="logistic-regression" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Logistic
+Regression</h2>
+<div id="train-model" class="section level3" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> Train Model</h3>
+<pre class="r"><code>lr_base_model &lt;- glm(Churn ~ ., data = data_train, family = &quot;binomial&quot;)
+summary(lr_base_model)</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = Churn ~ ., family = &quot;binomial&quot;, data = data_train)
@@ -1900,40 +1979,40 @@ effects:</p>
 <li>‘Yes’ factor for the PaperlessBilling column</li>
 </ul>
 </div>
-<div id="predict-for-specific-cases" class="section level2" number="4.3">
-<h2><span class="header-section-number">4.3</span> Predict for Specific
-Cases</h2>
+<div id="predict" class="section level3" number="6.1.2">
+<h3><span class="header-section-number">6.1.2</span> Predict</h3>
 <p>To test how our model will work with new data, we used the predict
 function with our test dataset.</p>
-<pre class="r"><code>data_pred &lt;- predict(base_model, data_test, type = &quot;response&quot;)</code></pre>
+<pre class="r"><code>lr_pred &lt;- predict(lr_base_model, data_test, type = &quot;response&quot;)</code></pre>
 <pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
 ## prediction from a rank-deficient fit may be misleading</code></pre>
-<pre class="r"><code>summary(data_pred)</code></pre>
+<pre class="r"><code>summary(lr_pred)</code></pre>
 <pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 ## 0.001407 0.044075 0.205610 0.270005 0.458217 0.857284</code></pre>
 <p>Then, we translated the predictions into binary, so that we can see
 it in “Yes” and “No”.</p>
-<pre class="r"><code>churn_binary_pred &lt;- ifelse(data_pred &gt;= 0.5, &quot;Yes&quot;, &quot;No&quot;)
-table(churn_binary_pred)</code></pre>
-<pre><code>## churn_binary_pred
-##   No  Yes 
+<pre class="r"><code>lr_binary_pred &lt;- ifelse(lr_pred &gt;= 0.5, 1, 0)
+table(lr_binary_pred)</code></pre>
+<pre><code>## lr_binary_pred
+##    0    1 
 ## 1381  379</code></pre>
 <pre class="r"><code>#levels(data_test$Churn)
 #levels(churn_binary_pred)</code></pre>
 </div>
-<div id="evaluate-model" class="section level2" number="4.4">
-<h2><span class="header-section-number">4.4</span> Evaluate Model</h2>
-<p>With the confusionMatrix, we evaluated our prediction.</p>
+<div id="evaluate-model" class="section level3" number="6.1.3">
+<h3><span class="header-section-number">6.1.3</span> Evaluate Model</h3>
+<p>With the confusionMatrix, we evaluated our prediction from the
+logistic regression model.</p>
 <pre class="r"><code>library(caret)</code></pre>
 <pre><code>## Loading required package: ggplot2</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
-<pre class="r"><code>confusionMatrix(as.factor(churn_binary_pred), data_test$Churn, positive = &quot;Yes&quot;)</code></pre>
+<pre class="r"><code>confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test$Churn), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
-## Prediction   No  Yes
-##        No  1163  218
-##        Yes  129  250
+## Prediction    0    1
+##          0 1163  218
+##          1  129  250
 ##                                           
 ##                Accuracy : 0.8028          
 ##                  95% CI : (0.7835, 0.8212)
@@ -1953,22 +2032,25 @@ table(churn_binary_pred)</code></pre>
 ##    Detection Prevalence : 0.2153          
 ##       Balanced Accuracy : 0.7172          
 ##                                           
-##        &#39;Positive&#39; Class : Yes             
+##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
 <p>The accuracy is <strong>80.28%</strong> and Kappa is
 <strong>0.4624</strong>. While the Kappa seems to be fine, the accuracy
-of the model can be improved with different analytical approaches. For
-next steps, we will try different methods to better predict the
-possibility of churn and what are the attributes that contribute to
-it.</p>
+of the model can be improved with different analytical approaches.</p>
 </div>
 </div>
-<div id="link-to-github-repository" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Link to GitHub
-repository</h1>
-<ul>
-<li><a href="https://github.com/sandychy/T0628GroupProject" class="uri">https://github.com/sandychy/T0628GroupProject</a></li>
-</ul>
+<div id="knn" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> kNN</h2>
+</div>
+<div id="ann" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> ANN</h2>
+</div>
+<div id="decision-tree" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Decision Tree</h2>
+</div>
+<div id="random-forest" class="section level2" number="6.5">
+<h2><span class="header-section-number">6.5</span> Random Forest</h2>
+</div>
 </div>
 
 
