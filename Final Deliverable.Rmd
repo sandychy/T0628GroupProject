@@ -34,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE)
     + Customer account information – how long they’ve been a customer, contract, payment method, paperless
     billing, monthly charges, and total charges
     + Demographic info about customers – gender, age range, and if they have partners and dependents
-<<<<<<< HEAD
+
 - Variables Overview
   + Gender
   + Senior Citizen - whether the customer is a senior citizen
@@ -62,9 +62,6 @@ knitr::opts_chunk$set(echo = TRUE)
 # Link to GitHub repository
 - https://github.com/sandychy/T0628GroupProject
 
-=======
-    
->>>>>>> 5dbc54e3c6759dc9438ece50daa22a4551a271f5
 
 # Preliminary Exploration And Data Cleaning 
 ## Get Data
@@ -110,8 +107,6 @@ data$Contract <- as.factor(data$Contract)
 data$PaperlessBilling <- as.factor(data$PaperlessBilling)
 data$PaymentMethod <- as.factor(data$PaymentMethod)
 data$Churn <- ifelse(data$Churn == "Yes", 1, 0)
-data$Churn <- as.factor(data$Churn)
-data$Churn <- ifelse(data$Churn=="Yes", 1, 0)
 data$customerID <- NULL
 ```
 
@@ -129,21 +124,12 @@ test_set <- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for
 
 data_test <- data[test_set, ]
 data_train <- data[-test_set, ]
-
-#First the predictors - all columns except the Churn column
-data_train <- data[-test_set, -match("Churn",names(data))]
-data_test <- data[test_set, -match("Churn",names(data))]
-
-#Now the response (aka Labels) - only the Churn column
-data_train_labels <- data[-test_set, "Churn"]
-data_test_labels <- data[test_set, "Churn"]
 ```
 Before training, we divided the dataset into test data (25%) and train data (75%).
 
 
 # Explanatory Power of the Data with a Preliminary Model
 
-<<<<<<< HEAD
 
 
 # Analysis with Simple Models
