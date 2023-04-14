@@ -1966,50 +1966,80 @@ str(data)</code></pre>
 Ready</h3>
 <pre class="r"><code># Using model.matrix to convert all the factors to dummy variables
 # We are converting all of the factors into dummy variables as the input into knn has to be numeric
+
 datamm &lt;- as.data.frame(model.matrix(~.-1, data)) # everything becomes 0 or 1 if it is a factor
 #str(datamm)
 # Randomize the rows in the data (shuffling the rows)
 set.seed(12345)
 datamm_random &lt;- datamm[sample(nrow(datamm)),]
+
+
+datamm &lt;- as.data.frame(model.matrix(~.-1, data)) # everything becomes 0 or 1 if it is a factor
+#str(datamm)
+
+# Randomize the rows in the data (shuffling the rows)
+set.seed(12345)
+datamm_random &lt;- datamm[sample(nrow(datamm)),]
+
+
 #Normalize the data
 normalize &lt;- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
+
 # we are going to normalize everything 
 datamm_norm &lt;- as.data.frame(lapply(datamm_random, normalize))
 #View(datamm_norm)</code></pre>
+<p>=======</p>
 </div>
-<div id="getting-train-and-test-samples-from-datamm" class="section level3" number="4.3.2">
-<h3><span class="header-section-number">4.3.2</span> Getting Train and
-Test Samples from datamm</h3>
-<pre class="r"><code># consider 25% of the data as train
+</div>
+</div>
+<div id="we-are-going-to-normalize-everything" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> we are going to
+normalize everything</h1>
+<p>datamm_norm &lt;- as.data.frame(lapply(datamm_random, normalize))
+#View(datamm_norm)</p>
+<pre><code>
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 31e1c1a2da9d2bb59110750730a757859e833c18
+### Getting Train and Test Samples from datamm
+
+```r
+# consider 25% of the data as train
 set.seed(12345)
 data_test_set &lt;- sample(1:nrow(datamm_norm), nrow(datamm_norm) * 0.25) 
 # Depending on R-version and computer, different rows may be selected. 
 # If that happens, results are different. 
+
 # Create a train set and test set
 data_train &lt;- datamm_norm[-data_test_set, -match(&quot;Churn&quot;, names(datamm_norm))] # remove y label
 data_test &lt;- datamm_norm[data_test_set, -match(&quot;Churn&quot;, names(datamm_norm))]
+#Now the response (aka Labels) - only the Churn column
+data_train_labels &lt;- datamm_norm[-data_test_set, &quot;Churn&quot;]
+data_test_labels &lt;- datamm_norm[data_test_set, &quot;Churn&quot;]
+
+
+# Create a train set and test set
+data_train &lt;- datamm_norm[-data_test_set, -match(&quot;Churn&quot;, names(datamm_norm))] # remove y label
+data_test &lt;- datamm_norm[data_test_set, -match(&quot;Churn&quot;, names(datamm_norm))]
+
 #Now the response (aka Labels) - only the Churn column
 data_train_labels &lt;- datamm_norm[-data_test_set, &quot;Churn&quot;]
 data_test_labels &lt;- datamm_norm[data_test_set, &quot;Churn&quot;]</code></pre>
 <p>Before training, we divided the dataset into test data (25%) and
 train data (75%).</p>
 </div>
-</div>
-</div>
-<div id="explanatory-power-of-the-data-with-a-preliminary-model" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Explanatory Power of
+<div id="explanatory-power-of-the-data-with-a-preliminary-model" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Explanatory Power of
 the Data with a Preliminary Model</h1>
 </div>
-<div id="analysis-with-simple-models" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Analysis with Simple
+<div id="analysis-with-simple-models" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Analysis with Simple
 Models</h1>
-<div id="logistic-regression" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> Logistic
+<div id="logistic-regression" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Logistic
 Regression</h2>
-<div id="train-model" class="section level3" number="6.1.1">
-<h3><span class="header-section-number">6.1.1</span> Train Model</h3>
+<div id="train-model" class="section level3" number="7.1.1">
+<h3><span class="header-section-number">7.1.1</span> Train Model</h3>
 <pre class="r"><code>lr_base_model &lt;- glm(data_train_labels ~ ., data = data_train, family = &quot;binomial&quot;)
 summary(lr_base_model)</code></pre>
 <pre><code>## 
@@ -2126,8 +2156,8 @@ effects:</p>
 <li>‘Yes’ factor for the PaperlessBilling column</li>
 </ul>
 </div>
-<div id="predict" class="section level3" number="6.1.2">
-<h3><span class="header-section-number">6.1.2</span> Predict</h3>
+<div id="predict" class="section level3" number="7.1.2">
+<h3><span class="header-section-number">7.1.2</span> Predict</h3>
 <p>To test how our model will work with new data, we used the predict
 function with our test dataset.</p>
 <pre class="r"><code>lr_pred &lt;- predict(lr_base_model, data_test, type = &quot;response&quot;)</code></pre>
@@ -2146,8 +2176,8 @@ table(lr_binary_pred)</code></pre>
 <pre class="r"><code>#levels(data_test$Churn)
 #levels(churn_binary_pred)</code></pre>
 </div>
-<div id="evaluate-model" class="section level3" number="6.1.3">
-<h3><span class="header-section-number">6.1.3</span> Evaluate Model</h3>
+<div id="evaluate-model" class="section level3" number="7.1.3">
+<h3><span class="header-section-number">7.1.3</span> Evaluate Model</h3>
 <p>With the confusionMatrix, we evaluated our prediction from the
 logistic regression model.</p>
 <pre class="r"><code>library(caret)</code></pre>
@@ -2185,16 +2215,16 @@ logistic regression model.</p>
 of the model can be improved with different analytical approaches.</p>
 </div>
 </div>
-<div id="knn" class="section level2" number="6.2">
-<h2><span class="header-section-number">6.2</span> KNN</h2>
-<div id="train-model-1" class="section level3" number="6.2.1">
-<h3><span class="header-section-number">6.2.1</span> Train Model</h3>
+<div id="knn" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> KNN</h2>
+<div id="train-model-1" class="section level3" number="7.2.1">
+<h3><span class="header-section-number">7.2.1</span> Train Model</h3>
 <pre class="r"><code>library(class)
 ksize&lt;-round(sqrt(nrow(data_train)),0) 
 knn_base_model &lt;- knn(data_train, data_test, data_train_labels, k = ksize)</code></pre>
 </div>
-<div id="evaluate-model-1" class="section level3" number="6.2.2">
-<h3><span class="header-section-number">6.2.2</span> Evaluate Model</h3>
+<div id="evaluate-model-1" class="section level3" number="7.2.2">
+<h3><span class="header-section-number">7.2.2</span> Evaluate Model</h3>
 <pre class="r"><code>library(caret)
 confusionMatrix(as.factor(knn_base_model), as.factor(data_test_labels), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
@@ -2235,11 +2265,11 @@ coefficient is <strong>0.3948</strong>, which indicates a fair agreement
 between the model’s predictions and the actual outcomes.</p>
 </div>
 </div>
-<div id="ann-simple-model" class="section level2" number="6.3">
-<h2><span class="header-section-number">6.3</span> ANN (simple
+<div id="ann-simple-model" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> ANN (simple
 model)</h2>
-<div id="train-model-2" class="section level3" number="6.3.1">
-<h3><span class="header-section-number">6.3.1</span> Train Model</h3>
+<div id="train-model-2" class="section level3" number="7.3.1">
+<h3><span class="header-section-number">7.3.1</span> Train Model</h3>
 <pre class="r"><code>library(neuralnet)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;neuralnet&#39;</code></pre>
@@ -2251,14 +2281,14 @@ model)</h2>
 ann_simple_model &lt;- readRDS(&#39;ann_simple_model.rds&#39;)
 plot(ann_simple_model)</code></pre>
 </div>
-<div id="predict-1" class="section level3" number="6.3.2">
-<h3><span class="header-section-number">6.3.2</span> Predict</h3>
+<div id="predict-1" class="section level3" number="7.3.2">
+<h3><span class="header-section-number">7.3.2</span> Predict</h3>
 <pre class="r"><code>ann_simple_model_pred &lt;- predict(ann_simple_model, data_test)
 #summary(ann_simple_pred)
 ann_simple_pred &lt;- ifelse(ann_simple_model_pred &gt;= 0.5, 1, 0)</code></pre>
 </div>
-<div id="evaluate-model-2" class="section level3" number="6.3.3">
-<h3><span class="header-section-number">6.3.3</span> Evaluate Model</h3>
+<div id="evaluate-model-2" class="section level3" number="7.3.3">
+<h3><span class="header-section-number">7.3.3</span> Evaluate Model</h3>
 <pre class="r"><code>confusionMatrix(as.factor(ann_simple_pred), as.factor(data_test_labels), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
@@ -2295,25 +2325,25 @@ coefficient which is <strong>0.4416</strong> indicates a moderate
 agreement with the actual outcomes.</p>
 </div>
 </div>
-<div id="ann-medium-sized-model" class="section level2" number="6.4">
-<h2><span class="header-section-number">6.4</span> ANN (medium-sized
+<div id="ann-medium-sized-model" class="section level2" number="7.4">
+<h2><span class="header-section-number">7.4</span> ANN (medium-sized
 model)</h2>
-<div id="train-model-3" class="section level3" number="6.4.1">
-<h3><span class="header-section-number">6.4.1</span> Train Model</h3>
+<div id="train-model-3" class="section level3" number="7.4.1">
+<h3><span class="header-section-number">7.4.1</span> Train Model</h3>
 <pre class="r"><code>library(neuralnet)
 #ann_mid_model &lt;- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 5, stepmax = 1e8)
 #saveRDS(ann_mid_model, file = &#39;ann_mid_model.rds&#39;)
 ann_mid_model &lt;- readRDS(&#39;ann_mid_model.rds&#39;)
 plot(ann_mid_model)</code></pre>
 </div>
-<div id="predict-2" class="section level3" number="6.4.2">
-<h3><span class="header-section-number">6.4.2</span> Predict</h3>
+<div id="predict-2" class="section level3" number="7.4.2">
+<h3><span class="header-section-number">7.4.2</span> Predict</h3>
 <pre class="r"><code>ann_mid_model_pred &lt;- predict(ann_mid_model, data_test)
 #summary(ann_mid_model_pred)
 ann_mid_pred &lt;- ifelse(ann_mid_model_pred &gt;= 0.5, 1, 0)</code></pre>
 </div>
-<div id="evaluate-model-3" class="section level3" number="6.4.3">
-<h3><span class="header-section-number">6.4.3</span> Evaluate Model</h3>
+<div id="evaluate-model-3" class="section level3" number="7.4.3">
+<h3><span class="header-section-number">7.4.3</span> Evaluate Model</h3>
 <pre class="r"><code>confusionMatrix(as.factor(ann_mid_pred), as.factor(data_test_labels), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
@@ -2353,24 +2383,24 @@ the model’s performance was significantly better than random
 guessing.</p>
 </div>
 </div>
-<div id="ann-high-model" class="section level2" number="6.5">
-<h2><span class="header-section-number">6.5</span> ANN (high model)</h2>
-<div id="train-model-4" class="section level3" number="6.5.1">
-<h3><span class="header-section-number">6.5.1</span> Train Model</h3>
+<div id="ann-high-model" class="section level2" number="7.5">
+<h2><span class="header-section-number">7.5</span> ANN (high model)</h2>
+<div id="train-model-4" class="section level3" number="7.5.1">
+<h3><span class="header-section-number">7.5.1</span> Train Model</h3>
 <pre class="r"><code>library(neuralnet)
 #ann_high_model &lt;- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = c(5, 3), stepmax = 1e8)
 #saveRDS(ann_high_model, file = &#39;ann_high_model.rds&#39;)
 ann_high_model &lt;- readRDS(&#39;ann_high_model.rds&#39;)
 #plot(ann_high_model)</code></pre>
 </div>
-<div id="predict-3" class="section level3" number="6.5.2">
-<h3><span class="header-section-number">6.5.2</span> Predict</h3>
+<div id="predict-3" class="section level3" number="7.5.2">
+<h3><span class="header-section-number">7.5.2</span> Predict</h3>
 <pre class="r"><code>ann_high_model_pred &lt;- predict(ann_high_model, data_test)
 #summary(ann_high_model_pred)
 ann_high_pred &lt;- ifelse(ann_high_model_pred &gt;= 0.5, 1, 0)</code></pre>
 </div>
-<div id="evaluate-model-4" class="section level3" number="6.5.3">
-<h3><span class="header-section-number">6.5.3</span> Evaluate Model</h3>
+<div id="evaluate-model-4" class="section level3" number="7.5.3">
+<h3><span class="header-section-number">7.5.3</span> Evaluate Model</h3>
 <pre class="r"><code>confusionMatrix(as.factor(ann_high_pred), as.factor(data_test_labels), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
@@ -2407,10 +2437,10 @@ ann_high_pred &lt;- ifelse(ann_high_model_pred &gt;= 0.5, 1, 0)</code></pre>
 </ul>
 </div>
 </div>
-<div id="decision-tree" class="section level2" number="6.6">
-<h2><span class="header-section-number">6.6</span> Decision Tree</h2>
-<div id="build-model" class="section level3" number="6.6.1">
-<h3><span class="header-section-number">6.6.1</span> Build Model</h3>
+<div id="decision-tree" class="section level2" number="7.6">
+<h2><span class="header-section-number">7.6</span> Decision Tree</h2>
+<div id="build-model" class="section level3" number="7.6.1">
+<h3><span class="header-section-number">7.6.1</span> Build Model</h3>
 <pre class="r"><code>library(C50)
 dt_base_model &lt;- C5.0(as.factor(data_train_labels) ~ ., data=data_train)
 plot(dt_base_model)</code></pre>
@@ -2421,7 +2451,7 @@ plot(dt_base_model)</code></pre>
 ## C5.0.formula(formula = as.factor(data_train_labels) ~ ., data = data_train)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Fri Apr 14 17:16:01 2023
+## C5.0 [Release 2.07 GPL Edition]      Fri Apr 14 17:19:44 2023
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -2510,8 +2540,8 @@ plot(dt_base_model)</code></pre>
 was used for all data and the tenure column and the InternetService
 columns were used for half of the data to classify the churn.</p>
 </div>
-<div id="predict-and-evaluate" class="section level3" number="6.6.2">
-<h3><span class="header-section-number">6.6.2</span> Predict and
+<div id="predict-and-evaluate" class="section level3" number="7.6.2">
+<h3><span class="header-section-number">7.6.2</span> Predict and
 Evaluate</h3>
 <pre class="r"><code>tree_pred &lt;- predict(dt_base_model, data_test)
 confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive=&quot;1&quot;)</code></pre>
@@ -2549,10 +2579,10 @@ confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive=&quo
 </ul>
 </div>
 </div>
-<div id="random-forest" class="section level2" number="6.7">
-<h2><span class="header-section-number">6.7</span> Random Forest</h2>
-<div id="build-model-1" class="section level3" number="6.7.1">
-<h3><span class="header-section-number">6.7.1</span> Build Model</h3>
+<div id="random-forest" class="section level2" number="7.7">
+<h2><span class="header-section-number">7.7</span> Random Forest</h2>
+<div id="build-model-1" class="section level3" number="7.7.1">
+<h3><span class="header-section-number">7.7.1</span> Build Model</h3>
 <pre class="r"><code>library(randomForest)</code></pre>
 <pre><code>## randomForest 4.7-1.1</code></pre>
 <pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
@@ -2603,8 +2633,8 @@ summary(rf_base_model)</code></pre>
 ## 0 3542 356  0.09132889
 ## 1  690 695  0.49819495</code></pre>
 </div>
-<div id="predict-and-evaluate-1" class="section level3" number="6.7.2">
-<h3><span class="header-section-number">6.7.2</span> Predict and
+<div id="predict-and-evaluate-1" class="section level3" number="7.7.2">
+<h3><span class="header-section-number">7.7.2</span> Predict and
 Evaluate</h3>
 <pre class="r"><code>rf_pred &lt;- predict(rf_base_model, data_test)
 confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive=&quot;1&quot;)</code></pre>
@@ -2643,8 +2673,8 @@ confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive=&quot;
 </div>
 </div>
 </div>
-<div id="second-level-decision-tree" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Second-level Decision
+<div id="second-level-decision-tree" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Second-level Decision
 Tree</h1>
 <p>Combine the five prediction vectors and the response variable into a
 Data Frame. You will now have a data frame of five columns.</p>
