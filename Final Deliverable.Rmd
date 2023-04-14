@@ -238,4 +238,3 @@ A simple model using random forest had the following performance:
 
 - Accuracy: 79.6%
 - Kappa: 0.4405
-
