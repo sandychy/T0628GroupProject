@@ -196,7 +196,46 @@ The accuracy is **80.28%** and Kappa is **0.4624**. While the Kappa seems to be 
 
 ## Decision Tree
 
+### Build Model
+```{r}
+library(C50)
+dt_base_model <- C5.0(as.factor(data_train_labels) ~ ., data=data_train)
+
+plot(dt_base_model)
+summary(dt_base_model)
+```
+From the decision tree model, we could learn that the Contract column was used for all data and the tenure column and the InternetService columns were used for half of the data to classify the churn.
+
+### Predict and Evaluate
+```{r}
+tree_pred <- predict(dt_base_model, data_test)
+
+confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive="1")
+```
+A simple model using decision tree had the following performance: 
+
+- Accuracy: 78.75%
+- Kappa: 0.3937
+
 
 ## Random Forest
 
+### Build Model
+```{r}
+library(randomForest)
+rf_base_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE)
+
+summary(rf_base_model)
+print(rf_base_model)
+```
+
+### Predict and Evaluate
+```{r}
+rf_pred <- predict(rf_base_model, data_test)
+confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive="1")
+```
+A simple model using random forest had the following performance: 
+
+- Accuracy: 79.6%
+- Kappa: 0.4405
 
