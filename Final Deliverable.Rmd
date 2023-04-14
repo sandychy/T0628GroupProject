@@ -89,7 +89,7 @@ str(data)
 summary(data)
 ```
 
-Then, we factorized the data and overwrote them to the same colums.
+Then, we factorized and normalized the data and overwrote them to the same columns.
 ```{r}
 data$gender <- as.factor(data$gender)
 data$Partner <- as.factor(data$Partner)
@@ -108,13 +108,20 @@ data$PaperlessBilling <- as.factor(data$PaperlessBilling)
 data$PaymentMethod <- as.factor(data$PaymentMethod)
 data$Churn <- ifelse(data$Churn == "Yes", 1, 0)
 data$customerID <- NULL
-```
 
-```{r}
+# Normalize Data
+normalize <- function(x){ # new function
+  (x - min(x))/(max(x)-min(x))
+}
+
+data$tenure <- normalize(data$tenure)
+data$MonthlyCharges <- normalize(data$MonthlyCharges)
+data$TotalCharges <- normalize(data$TotalCharges)
+
 str(data)
 summary(data)
-#View(data)
 ```
+
 ## Split Train and Test
 ```{r}
 # Randomize the rows in the data (shuffling the rows)
@@ -122,8 +129,12 @@ set.seed(12345)
 
 test_set <- sample(1:nrow(data), 0.25*nrow(data)) # 25% of data will be used for testing, 75% will be used for training.
 
-data_test <- data[test_set, ]
-data_train <- data[-test_set, ]
+#First the predictors - all columns except the Churn column
+data_train <- data[-test_set, -match("Churn",names(data))]
+data_test <- data[test_set, -match("Churn",names(data))]
+#Now the response (aka Labels) - only the Churn column
+data_train_labels <- data[-test_set, "Churn"]
+data_test_labels <- data[test_set, "Churn"]
 ```
 Before training, we divided the dataset into test data (25%) and train data (75%).
 
@@ -138,7 +149,7 @@ Before training, we divided the dataset into test data (25%) and train data (75%
 
 ### Train Model
 ```{r}
-lr_base_model <- glm(Churn ~ ., data = data_train, family = "binomial")
+lr_base_model <- glm(data_train_labels ~ ., data = data_train, family = "binomial")
 summary(lr_base_model)
 ```
 
@@ -172,7 +183,7 @@ table(lr_binary_pred)
 With the confusionMatrix, we evaluated our prediction from the logistic regression model.
 ```{r}
 library(caret)
-confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test$Churn), positive = "1")
+confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test_labels), positive = "1")
 ```
 The accuracy is **80.28%** and Kappa is **0.4624**. While the Kappa seems to be fine, the accuracy of the model can be improved with different analytical approaches.
 
