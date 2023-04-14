@@ -217,7 +217,7 @@ With the confusionMatrix, we evaluated our prediction from the logistic regressi
 library(caret)
 confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test_labels), positive = "1")
 ```
-The accuracy is **80.28%** and Kappa is **0.4624**. While the Kappa seems to be fine, the accuracy of the model can be improved with different analytical approaches.
+The accuracy is **77.78%** and Kappa is **0.421**. While the Kappa seems to be fine, the accuracy of the model can be improved with different analytical approaches.
 
 
 ## KNN
@@ -344,7 +344,7 @@ confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive="1")
 A simple model using decision tree had the following performance: 
 
 - Accuracy: 78.75%
-- Kappa: 0.3937
+- Kappa: 0.4494
 
 
 ## Random Forest
@@ -365,8 +365,8 @@ confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive="1")
 ```
 A simple model using random forest had the following performance: 
 
-- Accuracy: 79.6%
-- Kappa: 0.4405
+- Accuracy: 78.69%
+- Kappa: 0.4223
 
 # Second-level Decision Tree
 Combine the five prediction vectors and the response variable into a Data Frame. 
@@ -416,9 +416,9 @@ confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined),
 plot(tree_model_combined)
 ```
 
-- Logistic Regression -> Accuracy : 80.28%, Kappa : 0.4624 
+- Logistic Regression -> Accuracy : 77.78%, Kappa : 0.421 
 - KNN -> Accuracy : 75.85, Kappa : 0.3948,
 - ANN -> Accuracy : 77.44%, Kappa: 0.4041,
 - Decision Tree -> Accuracy : 78.75%, Kappa : 0.3937
 - Random Forest -> Accuracy : 79.6%, Kappa : 0.4405
-- **Second-level Decision Tree -> Accuracy : 81.82%, Kappa : 0.5118**
+- **Second-level Decision Tree -> Accuracy : 80.4%, Kappa : 0.5108**
