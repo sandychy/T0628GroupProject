@@ -70,45 +70,45 @@ library(ggplot2)
 library(dplyr)
 library(gridExtra)
 data <- read.csv("Telco Customer Churn.csv")
-
-p1 <- ggplot(data, aes(x=gender)) + ggtitle("Gender") + xlab("Gender") +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-p2 <- ggplot(data, aes(x=SeniorCitizen)) + ggtitle("Senior Citizen") + xlab("Senior Citizen") + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-p3 <- ggplot(data, aes(x=Partner)) + ggtitle("Partner") + xlab("Partner") + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-p4 <- ggplot(data, aes(x=Dependents)) + ggtitle("Dependents") + xlab("Dependents") +
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-grid.arrange(p1, p2, p3, p4, ncol=2)
-
-# Customer churn rate
-churn_breakdown <- data %>% 
-  group_by(Churn) %>% 
-  count(Churn) %>% 
-  mutate(perc = n/nrow(data) * 100) %>% 
-  rename(customers = n)
-churn_breakdown
-
-prop.table(table(data$gender, data$Churn), 1)
- 
-# Churn rate by gender
-ggplot(data = data, aes(x=gender, fill =  Churn)) + geom_bar(position = "fill", width=0.45) + 
-    scale_fill_manual(values = c("#0F4C75", "#a6cee3")) + 
-    theme(
-    plot.background = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.border = element_blank(),
-    plot.title = element_text(hjust = 0.5),
-    text=element_text(size=12)) + 
-    labs(x = " ", title = "Churn by Gender")
-
-ggplot(data = data, aes(x = gender, y = MonthlyCharges, fill = gender))+geom_boxplot() + stat_summary(fun=mean, geom="point", shape=20, size=8, color="red", fill="red")
-```
-
-## Get Data
-```{r}
-data <- read.csv("Telco Customer Churn.csv")
-str(data)
+# 
+# p1 <- ggplot(data, aes(x=gender)) + ggtitle("Gender") + xlab("Gender") +
+#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+# p2 <- ggplot(data, aes(x=SeniorCitizen)) + ggtitle("Senior Citizen") + xlab("Senior Citizen") + 
+#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+# p3 <- ggplot(data, aes(x=Partner)) + ggtitle("Partner") + xlab("Partner") + 
+#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+# p4 <- ggplot(data, aes(x=Dependents)) + ggtitle("Dependents") + xlab("Dependents") +
+#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+# grid.arrange(p1, p2, p3, p4, ncol=2)
+# 
+# # Customer churn rate
+# churn_breakdown <- data %>% 
+#   group_by(Churn) %>% 
+#   count(Churn) %>% 
+#   mutate(perc = n/nrow(data) * 100) %>% 
+#   rename(customers = n)
+# churn_breakdown
+# 
+# prop.table(table(data$gender, data$Churn), 1)
+#  
+# # Churn rate by gender
+# ggplot(data = data, aes(x=gender, fill =  Churn)) + geom_bar(position = "fill", width=0.45) + 
+#     scale_fill_manual(values = c("#0F4C75", "#a6cee3")) + 
+#     theme(
+#     plot.background = element_blank(),
+#     panel.grid.major = element_blank(),
+#     panel.border = element_blank(),
+#     plot.title = element_text(hjust = 0.5),
+#     text=element_text(size=12)) + 
+#     labs(x = " ", title = "Churn by Gender")
+# 
+# ggplot(data = data, aes(x = gender, y = MonthlyCharges, fill = gender))+geom_boxplot() + stat_summary(fun=mean, geom="point", shape=20, size=8, color="red", fill="red")
+# ```
+# 
+# ## Get Data
+# ```{r}
+# data <- read.csv("Telco Customer Churn.csv")
+# str(data)
 #summary(data)
 #View(data)
 ```
@@ -148,6 +148,9 @@ data$PaperlessBilling <- as.factor(data$PaperlessBilling)
 data$PaymentMethod <- as.factor(data$PaymentMethod)
 data$Churn <- ifelse(data$Churn == "Yes", 1, 0)
 data$customerID <- NULL
+# Data for autotune train()
+data_str <- data.frame(data)
+str(data_str)
 # Normalize Data
 normalize <- function(x){ # new function
   (x - min(x))/(max(x)-min(x))
@@ -178,6 +181,8 @@ datamm_norm <- as.data.frame(lapply(datamm_random, normalize))
 #View(datamm_norm)
 ```
 
+
+
 ### Getting Train and Test Samples from datamm
 ```{r}
 # consider 25% of the data as train
@@ -191,10 +196,14 @@ data_test <- datamm_norm[data_test_set, -match("Churn", names(datamm_norm))]
 #Now the response (aka Labels) - only the Churn column
 data_train_labels <- datamm_norm[-data_test_set, "Churn"]
 data_test_labels <- datamm_norm[data_test_set, "Churn"]
+# data for train()
+set.seed(12345)
+data_t_test_set <- sample(1:nrow(data_str), 0.25*nrow(data_str))
+data_t_test <- data[data_t_test_set, ]
+data_t_train <- data[-data_t_test_set, ]
+str(data_t_train)
 ```
 Before training, we divided the dataset into test data (25%) and train data (75%).
-
-# Explanatory Power of the Data with a Preliminary Model
 
 
 
@@ -203,12 +212,6 @@ Before training, we divided the dataset into test data (25%) and train data (75%
 ## Logistic Regression
 
 ### Train Model
-```{r}
-lr_base_model <- glm(data_train_labels ~ ., data = data_train, family = "binomial")
-summary(lr_base_model)
-```
-
-
 ```{r}
 lr_base_model <- glm(data_train_labels ~ ., data = data_train, family = "binomial")
 summary(lr_base_model)
@@ -277,7 +280,7 @@ library(neuralnet)
 #ann_simple_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 1)
 #saveRDS(ann_simple_model, file = 'ann_simple_model.rds')
 ann_simple_model <- readRDS('ann_simple_model.rds')
-plot(ann_simple_model)
+#plot(ann_simple_model)
 ```
 
 ### Predict
@@ -295,6 +298,176 @@ The ANN simple model's confusion matrix indicates that it correctly classified *
 
 
 
+## Decision Tree
+
+### Build Model
+```{r}
+library(C50)
+dt_base_model <- C5.0(as.factor(data_train_labels) ~ ., data=data_train)
+#plot(dt_base_model)
+summary(dt_base_model)
+```
+From the decision tree model, we could learn that the Contract column was used for all data and the tenure column and the InternetService columns were used for half of the data to classify the churn.
+
+### Predict and Evaluate
+```{r}
+tree_pred <- predict(dt_base_model, data_test)
+confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive="1")
+```
+A simple model using decision tree had the following performance: 
+
+- Accuracy: 78.75%
+- Kappa: 0.4494
+
+
+## Random Forest
+
+### Build Model
+```{r}
+library(randomForest)
+rf_base_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE)
+summary(rf_base_model)
+print(rf_base_model)
+```
+
+### Predict and Evaluate
+```{r}
+rf_pred <- predict(rf_base_model, data_test)
+confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive="1")
+```
+A simple model using random forest had the following performance: 
+
+- Accuracy: 78.69%
+- Kappa: 0.4239
+
+# Combined Predictions with Simple Models
+
+## Combine Prediction Vectors
+Combine the five prediction vectors and the response variable into a Data Frame. 
+You will now have a data frame of five columns.
+```{r}
+df <- data.frame("Logistic" = lr_binary_pred,
+                  "KNN" = knn_base_model,
+                  "ANN" = ann_simple_pred,
+                  "Decision Tree" = tree_pred,
+                  "Random Forest" = rf_pred,
+                 "labels" = data_test_labels) # add y label
+#View(df)
+```
+
+## Split Train and Test Data
+Break this data frame into a test and a train set.
+```{r}
+# consider 20% of the data as train
+set.seed(12345)
+test_set_combined <- sample(1:nrow(df), nrow(df) * 0.2) 
+train_combined <- df[-test_set_combined,-match("labels",names(df))]
+test_combined <- df[test_set_combined, -match("labels",names(df))]
+train_labels_combined <- df[-test_set_combined, "labels"]
+test_labels_combined <- df[test_set_combined, "labels"]
+```
+
+## Predict Using Decision Tree
+Build a decision tree model on the train set. 
+Use all the prediction vector columns as the x values and the response variable as the y value.
+```{r}
+# build decision tree model
+tree_model_combined <- C5.0(as.factor(train_labels_combined) ~ ., data = train_combined)
+#summary(tree_model_combined)
+# make predictions on test data
+tree_preds_combined <- predict(tree_model_combined, test_combined)
+# evaluate the model performance
+library(caret)
+confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
+```
+
+
+```{r}
+#plot(tree_model_combined)
+```
+
+- Logistic Regression -> Accuracy : 77.78%, Kappa : 0.421 
+- KNN -> Accuracy : 75.85, Kappa : 0.3948
+- ANN -> Accuracy : 79.03%, Kappa: 0.4416
+- Decision Tree -> Accuracy : 78.75%, Kappa : 0.4494
+- Random Forest -> Accuracy : 78.69%, Kappa : 0.4223
+- **Second-level Decision Tree -> Accuracy : 79.26%, Kappa : 0.0463**
+
+
+# Improving Models
+
+## Logistic Regression Model
+
+### Train Model
+
+We try to only use the factors with significant effect: 
+- tenure 
+- ContractOne.year 
+- ContractTwo.year 
+- PaperlessBillingYes 
+- PaymentMethodElectronic.check 
+- TotalCharges
+```{r}
+lr_try1_model <- glm(data_train_labels ~ tenure + ContractOne.year + ContractTwo.year + PaperlessBillingYes + PaymentMethodElectronic.check + TotalCharges, data = data_train, family = "binomial")
+```
+
+### Predict
+```{r}
+lr_try1_pred <- predict(lr_try1_model, data_test, type = "response")
+lr_try1_binary_pred <- ifelse(lr_try1_pred >= 0.5, 1, 0)
+```
+
+### Evaluate
+```{r}
+library(caret)
+confusionMatrix(as.factor(lr_try1_binary_pred), as.factor(data_test_labels), positive = "1")
+```
+- Accuracy : 0.7602
+- Kappa : 0.3645
+
+## Auto-Tune KNN Model
+
+### Prepare Data for Auti-Tune KNN Model
+```{r}
+# consider 25% of the data as train
+set.seed(12345)
+# Create a train set and test set
+data_train_tune_knn <- datamm_norm[-data_test_set, ] 
+data_test_tune_knn <- datamm_norm[data_test_set, ]
+```
+
+
+```{r}
+library(caret)
+set.seed(12345)
+ctrl <- trainControl(method = "cv", number = 4,
+                     selectionFunction = "oneSE")
+grid <- expand.grid(k = c((ksize-50), (ksize), (ksize+50), (ksize+100), (ksize+150),  (ksize+200)))
+trainmodel_tuned_knn <- train(as.factor(Churn) ~ ., data = data_train_tune_knn, method = "knn",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid)
+trainmodel_tuned_knn
+```
+The final value used for the model was k = 173.
+
+###  Train Model
+```{r}
+library(class)
+ksize<-round(sqrt(nrow(data_train)),0) 
+knn_tuned_model <- knn(data_train, data_test, data_train_labels, k = 173)
+```
+
+### Evaluate Model
+```{r}
+library(caret)
+confusionMatrix(as.factor(knn_tuned_model), as.factor(data_test_labels), positive = "1")
+```
+The tuned KNN Model (k=173) had the following performance:
+  - Accuracy: 76.93%
+  - **Kappa: 0.4109**
+The original KNN model (k=73) -> Accuracy : 77.05, Kappa : 0.4138,
+
 ## ANN (medium-sized model)
 
 ### Train Model
@@ -303,7 +476,7 @@ library(neuralnet)
 #ann_mid_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 5, stepmax = 1e8)
 #saveRDS(ann_mid_model, file = 'ann_mid_model.rds')
 ann_mid_model <- readRDS('ann_mid_model.rds')
-plot(ann_mid_model)
+#plot(ann_mid_model)
 ```
 
 ### Predict
@@ -349,94 +522,180 @@ confusionMatrix(as.factor(ann_high_pred), as.factor(data_test_labels), positive 
 - **ANN medium model = 5 -> Accuracy: 77.44%, Kappa: 0.4041**
 - ANN high model = (5,3) -> Accuracy: 76.14%, Kappa: 0.3726 
 
-
 ## Decision Tree
 
-### Build Model
+### Auto-Tune Model
 ```{r}
-library(C50)
-dt_base_model <- C5.0(as.factor(data_train_labels) ~ ., data=data_train)
-plot(dt_base_model)
-summary(dt_base_model)
+set.seed(12345)
+ctrl <- trainControl(method = "cv", number = 4,
+                     selectionFunction = "oneSE")
+grid <- expand.grid(.model = "tree",
+                    .trials = c(1, 5, 10, 15, 20),
+                    .winnow = "FALSE")
+dt_high_model <- train(as.factor(Churn) ~ ., data=data_t_train, method = "C5.0",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid)
+dt_high_model
 ```
-From the decision tree model, we could learn that the Contract column was used for all data and the tenure column and the InternetService columns were used for half of the data to classify the churn.
+From auto-tune, the final value used for the model was trials = 10 and the accuracy was 79.78% and kappa was 0.4562908. In terms of the accuracy, the best parameter was 10 as well.
+
+With the results from the auto-tune experiment, we built an improved decision tree model with 10 trials.
+```{r}
+dt_tune_model <- C5.0(as.factor(data_train_labels) ~ ., data=data_train, trials=10)
+#plot(dt_tune_model)
+summary(dt_tune_model)
+```
 
 ### Predict and Evaluate
 ```{r}
-tree_pred <- predict(dt_base_model, data_test)
-confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive="1")
+tree_tune_pred <- predict(dt_tune_model, data_test)
+confusionMatrix(as.factor(tree_tune_pred), as.factor(data_test_labels), positive="1")
 ```
-A simple model using decision tree had the following performance: 
+The tuned model using decision tree had the following performance: 
 
-- Accuracy: 78.75%
-- Kappa: 0.4494
+- Accuracy: 78.92% (simple model: 78.75%)
+- Kappa: 0.4332 (simple model: 0.4494)
 
 
 ## Random Forest
 
+### Auto-tune Model
+```{r}
+set.seed(12345)
+ctrl <- trainControl(method = "repeatedcv", number = 10,
+                     selectionFunction = "oneSE")
+#mtry <- sqrt(ncol(data_t_train))
+grid <- expand.grid(.mtry = (1:15))
+# rf_high_model <- train(as.factor(Churn) ~ ., data=data_t_train, method = "rf", metric = "Kappa", trControl = ctrl, tuneGrid = grid)
+# saveRDS(rf_high_model, file = 'rf_high_model.rds')
+rf_high_model <- readRDS('rf_high_model.rds')
+rf_high_model
+#plot(rf_high_model)
+```
+
+According to cross-validation, the model showed best Kappa and accuracy when mtry was 3.
+
+
+Using the parameter and the value, we built a new random forest model.
+
 ### Build Model
 ```{r}
-library(randomForest)
-rf_base_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE)
-summary(rf_base_model)
-print(rf_base_model)
+rf_tune_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE, mtry=3)
+summary(rf_tune_model)
+print(rf_tune_model)
 ```
 
 ### Predict and Evaluate
 ```{r}
-rf_pred <- predict(rf_base_model, data_test)
-confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive="1")
+rf_tune_pred <- predict(rf_tune_model, data_test)
+confusionMatrix(as.factor(rf_tune_pred), as.factor(data_test_labels), positive="1")
 ```
-A simple model using random forest had the following performance: 
+The random forest model with a tuned parameter had the following performance: 
 
-- Accuracy: 78.69%
-- Kappa: 0.4223
+- Accuracy: 79.38% (simple model: 78.69%)
+- Kappa: 0.4281 (simple model: 0.4223)
 
-# Second-level Decision Tree
-Combine the five prediction vectors and the response variable into a Data Frame. 
-You will now have a data frame of five columns.
+
+
+
+
+## Compare with the original models
+
+Logistic Regression:
+
+- simple model (use all factors)
+  - Accuracy : 77.78%
+  - **Kappa : 0.421**
+- use the factors with significant effect: 
+  - Accuracy : 0.7602
+  - Kappa : 0.3645
+
+KNN
+
+- simple model (k=73)
+  - Accuracy : 75.85
+  - Kappa : 0.3948
+- auto-tuned model (k=173)
+  - Accuracy: 76.93% 
+  - **Kappa: 0.4109**
+  
+ANN
+
+- simple model
+  - Accuracy: 76.53 %
+  - Kappa: 0.3892
+- medium model
+  - Accuracy: 77.44%
+  - **Kappa: 0.4041**
+- high model
+  - Accuracy: 76.14%
+  - Kappa: 0.3726
+  
+Decision Tree
+
+- simple model
+  - Accuracy : 78.75%
+  - **Kappa : 0.4494**
+- auto-tuned model
+  - Accuracy: 78.92% 
+  - Kappa: 0.4332
+  
+Random Forest
+
+- simple model
+  - Accuracy : 78.69%
+  - Kappa : 0.4239
+- auto-tuned model
+  - Accuracy: 79.38% 
+  - **Kappa: 0.4281**
+
+Second-level Decision Tree (simple model)
+
+  - Accuracy : 80.4%
+  - **Kappa : 0.5108**
+
+# Combined Predictions with Optimized Models
+
+## Combine Prediction Vectors
 ```{r}
-df <- data.frame("Logistic" = lr_binary_pred,
-                  "KNN" = knn_base_model,
+df_opt <- data.frame("Logistic" = lr_binary_pred,
+                  "KNN" = knn_tuned_model,
                   "ANN" = ann_mid_pred,
                   "Decision Tree" = tree_pred,
-                  "Random Forest" = rf_pred,
+                  "Random Forest" = rf_tune_pred,
                  "labels" = data_test_labels) # add y label
-#View(df)
 ```
 
-Break this data frame into a test and a train set.
+## Split Train and Test Data
 ```{r}
-# consider 20% of the data as train
 set.seed(12345)
-test_set_combined <- sample(1:nrow(df), nrow(df) * 0.2) 
-train_combined <- df[-test_set_combined,-match("labels",names(df))]
-test_combined <- df[test_set_combined, -match("labels",names(df))]
-train_labels_combined <- df[-test_set_combined, "labels"]
-test_labels_combined <- df[test_set_combined, "labels"]
+test_set_opt <- sample(1:nrow(df_opt), nrow(df_opt) * 0.2) 
+train_opt <- df_opt[-test_set_opt,-match("labels",names(df_opt))]
+test_opt <- df_opt[test_set_opt, -match("labels",names(df_opt))]
+train_labels_opt <- df_opt[-test_set_opt, "labels"]
+test_labels_opt <- df_opt[test_set_opt, "labels"]
 ```
 
-Build a decision tree model on the train set. 
-Use all the prediction vector columns as the x values and the response variable as the y value.
+## Predict Using Decision Tree
 ```{r}
 # build decision tree model
-tree_model_combined <- C5.0(as.factor(train_labels_combined) ~ ., data = train_combined)
+tree_model_opt <- C5.0(as.factor(train_labels_opt) ~ ., data = train_opt)
 #summary(tree_model_combined)
 # make predictions on test data
-tree_preds_combined <- predict(tree_model_combined, test_combined)
+tree_preds_opt <- predict(tree_model_opt, test_opt)
 # evaluate the model performance
 library(caret)
-confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
+confusionMatrix(as.factor(tree_preds_opt), as.factor(test_labels_opt), positive = "1")
 ```
 
 
-```{r}
-plot(tree_model_combined)
-```
+Second-level Decision Tree (optimized model)
 
-- Logistic Regression -> Accuracy : 77.78%, Kappa : 0.421 
-- KNN -> Accuracy : 75.85, Kappa : 0.3948,
-- ANN -> Accuracy : 77.44%, Kappa: 0.4041,
-- Decision Tree -> Accuracy : 78.75%, Kappa : 0.3937
-- Random Forest -> Accuracy : 79.6%, Kappa : 0.4405
-- **Second-level Decision Tree -> Accuracy : 80.4%, Kappa : 0.5108**
+  - Accuracy : 77.84%
+  - Kappa : 0.4096 
+  
+Second-level Decision Tree (simple model)
+
+  - Accuracy : 80.4%
+  - **Kappa : 0.5108**
