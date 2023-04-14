@@ -188,7 +188,7 @@ confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test_labels), positive
 The accuracy is **80.28%** and Kappa is **0.4624**. While the Kappa seems to be fine, the accuracy of the model can be improved with different analytical approaches.
 
 
-## kNN
+## KNN
 
 ### Getting Data Ready for knn
 ```{r}
@@ -245,7 +245,7 @@ confusionMatrix(as.factor(knn_base_model), as.factor(datamm_test_labels), positi
 ```
 The confusion matrix shows the performance of the k-nearest neighbors (KNN) model on a binary classification problem with two classes: 0 (no churn) and 1 (churn). The model predicted 1063 true negatives (TN), 272 true positives (TP), 213 false positives (FP), and 212 false negatives (FN).
 
-The accuracy of the model is 0.7585, which means that it correctly classified 75.85% of the instances. The kappa coefficient is 0.3948, which indicates a fair agreement between the model's predictions and the actual outcomes.
+The accuracy of the model is **0.7585**, which means that it correctly classified 75.85% of the instances. The kappa coefficient is **0.3948**, which indicates a fair agreement between the model's predictions and the actual outcomes.
 
 
 ## ANN (simple model)
@@ -270,7 +270,7 @@ ann_simple_pred <- ifelse(ann_simple_model_pred >= 0.5, 1, 0)
 ```{r}
 confusionMatrix(as.factor(ann_simple_pred), as.factor(datamm_test_labels), positive = "1")
 ```
-The ANN simple model's confusion matrix indicates that it correctly classified 79.03% of instances with 254 true positives and 139 false positives. The model's accuracy is significantly better than random guessing with a p-value of 1.689e-10, and its kappa coefficient indicates a moderate agreement with the actual outcomes.
+The ANN simple model's confusion matrix indicates that it correctly classified **79.03%** of instances with 254 true positives and 139 false positives. The model's accuracy is significantly better than random guessing with a p-value of 1.689e-10, and its kappa coefficient which is **0.4416** indicates a moderate agreement with the actual outcomes.
 
 
 
@@ -325,9 +325,9 @@ confusionMatrix(as.factor(ann_high_pred), as.factor(datamm_test_labels), positiv
 
 
 
-- ANN simple model -> Accuracy: 0.7653 %, Kappa: 0.3892
-- **ANN medium model = 5 -> Accuracy: 0.7744%, Kappa: 0.4041**
-- ANN high model = (5,3) -> Accuracy: 0.7614%, Kappa: 0.3726 
+- ANN simple model -> Accuracy: 76.53 %, Kappa: 0.3892
+- **ANN medium model = 5 -> Accuracy: 77.44%, Kappa: 0.4041**
+- ANN high model = (5,3) -> Accuracy: 76.14%, Kappa: 0.3726 
 
         
 
@@ -376,3 +376,57 @@ A simple model using random forest had the following performance:
 - Accuracy: 79.6%
 - Kappa: 0.4405
 
+# Second-level Decision Tree
+Combine the five prediction vectors and the response variable into a Data Frame. 
+You will now have a data frame of five columns.
+```{r}
+df <- data.frame("Logistic" = lr_binary_pred,
+                  "KNN" = knn_base_model,
+                  "ANN" = ann_mid_pred,
+                  "Decision Tree" = tree_pred,
+                  "Random Forest" = rf_pred,
+                 "labels" = data_test_labels) # add y label
+#View(df)
+
+```
+
+Break this data frame into a test and a train set.
+```{r}
+# consider 20% of the data as train
+set.seed(12345)
+test_set_combined <- sample(1:nrow(df), nrow(df) * 0.2) 
+
+
+train_combined <- df[-test_set_combined,-match("labels",names(df))]
+test_combined <- df[test_set_combined, -match("labels",names(df))]
+
+train_labels_combined <- df[-test_set_combined, "labels"]
+test_labels_combined <- df[test_set_combined, "labels"]
+```
+
+Build a decision tree model on the train set. 
+Use all the prediction vector columns as the x values and the response variable as the y value.
+```{r}
+# build decision tree model
+tree_model_combined <- C5.0(as.factor(train_labels_combined) ~ ., data = train_combined)
+#summary(tree_model_combined)
+
+# make predictions on test data
+tree_preds_combined <- predict(tree_model_combined, test_combined)
+
+# evaluate the model performance
+library(caret)
+confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
+```
+
+
+```{r}
+plot(tree_model_combined)
+```
+
+- Logistic Regression -> Accuracy : 80.28%, Kappa : 0.4624 
+- KNN -> Accuracy : 75.85, Kappa : 0.3948,
+- ANN -> Accuracy : 77.44%, Kappa: 0.4041,
+- Decision Tree -> Accuracy : 78.75%, Kappa : 0.3937
+- Random Forest -> Accuracy : 79.6%, Kappa : 0.4405
+- **Second-level Decision Tree -> Accuracy : 81.82%, Kappa : 0.5118**
