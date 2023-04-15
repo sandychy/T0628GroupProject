@@ -516,5 +516,88 @@ The tuned KNN Model (k=173) had the following performance:
 - Accuracy: 76.93%
 - Kappa: 0.4109
 
+## Decision Tree
+
+### Auto-Tune Model
+```{r}
+set.seed(12345)
+
+ctrl <- trainControl(method = "cv", number = 4,
+                     selectionFunction = "oneSE")
 
 
+grid <- expand.grid(.model = "tree",
+                    .trials = c(1, 5, 10, 15, 20),
+                    .winnow = "FALSE")
+
+
+dt_high_model <- train(as.factor(Churn) ~ ., data=data_t_train, method = "C5.0",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid)
+dt_high_model
+```
+From auto-tune, the final value used for the model was trials = 10 and the accuracy was 79.78% and kappa was 0.4562908. In terms of the accuracy, the best parameter was 10 as well.
+
+With the results from the auto-tune experiment, we built an improved decision tree model with 10 trials.
+```{r}
+dt_tune_model <- C5.0(as.factor(data_train_labels) ~ ., data=data_train, trials=10)
+plot(dt_tune_model)
+summary(dt_tune_model)
+```
+
+### Predict and Evaluate
+```{r}
+tree_tune_pred <- predict(dt_tune_model, data_test)
+confusionMatrix(as.factor(tree_tune_pred), as.factor(data_test_labels), positive="1")
+```
+The tuned model using decision tree had the following performance: 
+
+- Accuracy: 78.92% (simple model: 78.75%)
+- Kappa: 0.4332 (simple model: 0.4494)
+
+
+## Random Forest
+
+### Auto-tune Model
+```{r}
+set.seed(12345)
+
+ctrl <- trainControl(method = "repeatedcv", number = 10,
+                     selectionFunction = "oneSE")
+
+#mtry <- sqrt(ncol(data_t_train))
+grid <- expand.grid(.mtry = (1:15))
+
+
+# rf_high_model <- train(as.factor(Churn) ~ ., data=data_t_train, method = "rf",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid)
+# saveRDS(rf_high_model, file = 'rf_high_model.rds')
+rf_high_model <- readRDS('rf_high_model.rds')
+rf_high_model
+plot(rf_high_model)
+```
+
+According to cross-validation, the model showed best Kappa and accuracy when mtry was 3.
+
+
+Using the parameter and the value, we built a new random forest model.
+
+### Build Model
+```{r}
+rf_tune_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE, mtry=3)
+summary(rf_tune_model)
+print(rf_tune_model)
+```
+
+### Predict and Evaluate
+```{r}
+rf_tune_pred <- predict(rf_tune_model, data_test)
+confusionMatrix(as.factor(rf_tune_pred), as.factor(data_test_labels), positive="1")
+```
+The random forest model with a tuned parameter had the following performance: 
+
+- Accuracy: 79.15% (simple model: 78.69%)
+- Kappa: 0.4226 (simple model: 0.4223)
