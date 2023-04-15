@@ -2296,7 +2296,7 @@ summary(dt_base_model)</code></pre>
 ## C5.0.formula(formula = as.factor(data_train_labels) ~ ., data = data_train)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sat Apr 15 01:33:07 2023
+## C5.0 [Release 2.07 GPL Edition]      Sat Apr 15 04:05:59 2023
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -2521,6 +2521,9 @@ confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive=&quot;
 <div id="combined-predictions-with-simple-models" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Combined Predictions
 with Simple Models</h1>
+<div id="combine-prediction-vectors" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Combine Prediction
+Vectors</h2>
 <p>Combine the five prediction vectors and the response variable into a
 Data Frame. You will now have a data frame of five columns.</p>
 <pre class="r"><code>df &lt;- data.frame(&quot;Logistic&quot; = lr_binary_pred,
@@ -2530,6 +2533,10 @@ Data Frame. You will now have a data frame of five columns.</p>
                   &quot;Random Forest&quot; = rf_pred,
                  &quot;labels&quot; = data_test_labels) # add y label
 #View(df)</code></pre>
+</div>
+<div id="split-train-and-test-data" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Split Train and Test
+Data</h2>
 <p>Break this data frame into a test and a train set.</p>
 <pre class="r"><code># consider 20% of the data as train
 set.seed(12345)
@@ -2538,6 +2545,10 @@ train_combined &lt;- df[-test_set_combined,-match(&quot;labels&quot;,names(df))]
 test_combined &lt;- df[test_set_combined, -match(&quot;labels&quot;,names(df))]
 train_labels_combined &lt;- df[-test_set_combined, &quot;labels&quot;]
 test_labels_combined &lt;- df[test_set_combined, &quot;labels&quot;]</code></pre>
+</div>
+<div id="predict-using-decision-tree" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Predict Using
+Decision Tree</h2>
 <p>Build a decision tree model on the train set. Use all the prediction
 vector columns as the x values and the response variable as the y
 value.</p>
@@ -2586,6 +2597,7 @@ confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined),
 <li><strong>Second-level Decision Tree -&gt; Accuracy : 79.26%, Kappa :
 0.0463</strong></li>
 </ul>
+</div>
 </div>
 <div id="improving-models" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Improving Models</h1>
@@ -2923,7 +2935,7 @@ summary(dt_tune_model)</code></pre>
 ##  data_train, trials = 10)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sat Apr 15 01:33:33 2023
+## C5.0 [Release 2.07 GPL Edition]      Sat Apr 15 04:06:25 2023
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -3504,12 +3516,17 @@ original models</h2>
 <li><strong>Kappa: 0.4281</strong></li>
 </ul></li>
 </ul>
+<p>Second-level Decision Tree (simple model)</p>
+<ul>
+<li>Accuracy : 80.4%</li>
+<li><strong>Kappa : 0.5108</strong></li>
+</ul>
 </div>
 </div>
 <div id="combined-predictions-with-optimized-models" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Combined Predictions
 with Optimized Models</h1>
-<div id="combine-prediction-vectors" class="section level2" number="8.1">
+<div id="combine-prediction-vectors-1" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> Combine Prediction
 Vectors</h2>
 <pre class="r"><code>df_opt &lt;- data.frame(&quot;Logistic&quot; = lr_binary_pred,
@@ -3519,7 +3536,7 @@ Vectors</h2>
                   &quot;Random Forest&quot; = rf_tune_pred,
                  &quot;labels&quot; = data_test_labels) # add y label</code></pre>
 </div>
-<div id="split-train-and-test-data" class="section level2" number="8.2">
+<div id="split-train-and-test-data-1" class="section level2" number="8.2">
 <h2><span class="header-section-number">8.2</span> Split Train and Test
 Data</h2>
 <pre class="r"><code>set.seed(12345)
@@ -3529,7 +3546,7 @@ test_opt &lt;- df_opt[test_set_opt, -match(&quot;labels&quot;,names(df_opt))]
 train_labels_opt &lt;- df_opt[-test_set_opt, &quot;labels&quot;]
 test_labels_opt &lt;- df_opt[test_set_opt, &quot;labels&quot;]</code></pre>
 </div>
-<div id="predict-using-decision-tree" class="section level2" number="8.3">
+<div id="predict-using-decision-tree-1" class="section level2" number="8.3">
 <h2><span class="header-section-number">8.3</span> Predict Using
 Decision Tree</h2>
 <pre class="r"><code># build decision tree model
@@ -3567,10 +3584,15 @@ confusionMatrix(as.factor(tree_preds_opt), as.factor(test_labels_opt), positive 
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
-<p>Second-level Decision Tree (simple model)</p>
+<p>Second-level Decision Tree (optimized model)</p>
 <ul>
 <li>Accuracy : 77.84%</li>
 <li>Kappa : 0.4096</li>
+</ul>
+<p>Second-level Decision Tree (simple model)</p>
+<ul>
+<li>Accuracy : 80.4%</li>
+<li><strong>Kappa : 0.5108</strong></li>
 </ul>
 </div>
 </div>
