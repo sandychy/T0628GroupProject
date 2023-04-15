@@ -570,10 +570,7 @@ ctrl <- trainControl(method = "repeatedcv", number = 10,
 grid <- expand.grid(.mtry = (1:15))
 
 
-# rf_high_model <- train(as.factor(Churn) ~ ., data=data_t_train, method = "rf",
-           metric = "Kappa",
-           trControl = ctrl,
-           tuneGrid = grid)
+# rf_high_model <- train(as.factor(Churn) ~ ., data=data_t_train, method = "rf", metric = "Kappa", trControl = ctrl, tuneGrid = grid)
 # saveRDS(rf_high_model, file = 'rf_high_model.rds')
 rf_high_model <- readRDS('rf_high_model.rds')
 rf_high_model
