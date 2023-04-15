@@ -724,4 +724,4 @@ Second-level Decision Tree (optimized model)
 Second-level Decision Tree (simple model)
 
   - Accuracy : 80.4%
-  - **Kappa : 0.5108**
+  - Kappa : 0.5108
