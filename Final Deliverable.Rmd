@@ -373,10 +373,10 @@ confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive="1")
 ```
 A simple model using random forest had the following performance: 
 
-- Accuracy: 79.6%
-- Kappa: 0.4405
+- Accuracy: 78.69%
+- Kappa: 0.4223
 
-# Second-level Decision Tree
+# Combined Predictions with Simple Models
 Combine the five prediction vectors and the response variable into a Data Frame. 
 You will now have a data frame of five columns.
 ```{r}
@@ -387,7 +387,6 @@ df <- data.frame("Logistic" = lr_binary_pred,
                   "Random Forest" = rf_pred,
                  "labels" = data_test_labels) # add y label
 #View(df)
-
 ```
 
 Break this data frame into a test and a train set.
@@ -395,11 +394,8 @@ Break this data frame into a test and a train set.
 # consider 20% of the data as train
 set.seed(12345)
 test_set_combined <- sample(1:nrow(df), nrow(df) * 0.2) 
-
-
 train_combined <- df[-test_set_combined,-match("labels",names(df))]
 test_combined <- df[test_set_combined, -match("labels",names(df))]
-
 train_labels_combined <- df[-test_set_combined, "labels"]
 test_labels_combined <- df[test_set_combined, "labels"]
 ```
@@ -410,10 +406,8 @@ Use all the prediction vector columns as the x values and the response variable 
 # build decision tree model
 tree_model_combined <- C5.0(as.factor(train_labels_combined) ~ ., data = train_combined)
 #summary(tree_model_combined)
-
 # make predictions on test data
 tree_preds_combined <- predict(tree_model_combined, test_combined)
-
 # evaluate the model performance
 library(caret)
 confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
@@ -424,10 +418,72 @@ confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined),
 plot(tree_model_combined)
 ```
 
-- Logistic Regression -> Accuracy : 80.28%, Kappa : 0.4624 
+- Logistic Regression -> Accuracy : 77.78%, Kappa : 0.421 
 - KNN -> Accuracy : 75.85, Kappa : 0.3948,
 - ANN -> Accuracy : 77.44%, Kappa: 0.4041,
 - Decision Tree -> Accuracy : 78.75%, Kappa : 0.3937
 - Random Forest -> Accuracy : 79.6%, Kappa : 0.4405
-- **Second-level Decision Tree -> Accuracy : 81.82%, Kappa : 0.5118**
+- **Second-level Decision Tree -> Accuracy : 80.4%, Kappa : 0.5108**
+
+
+# Improving Models
+
+## Auto-Tune KNN Model
+
+### Prepare Data for Auti-Tune KNN Model
+```{r}
+# consider 25% of the data as train
+set.seed(12345)
+# data_test_set <- sample(1:nrow(datamm_norm), nrow(datamm_norm) * 0.25) 
+# Depending on R-version and computer, different rows may be selected. 
+# If that happens, results are different. 
+
+# Create a train set and test set
+data_train_tune_knn <- datamm_norm[-data_test_set, ] 
+data_test_tune_knn <- datamm_norm[data_test_set, ]
+
+#Now the response (aka Labels) - only the Churn column
+#data_train_labels <- datamm_norm[-data_test_set, "Churn"]
+#data_test_labels <- datamm_norm[data_test_set, "Churn"]
+```
+
+
+```{r}
+library(caret)
+
+set.seed(12345)
+
+ctrl <- trainControl(method = "cv", number = 4,
+                     selectionFunction = "oneSE")
+
+
+grid <- expand.grid(k = c((ksize-50), (ksize), (ksize+50), (ksize+100), (ksize+150),  (ksize+200)))
+
+
+trainmodel_tuned_knn <- train(as.factor(Churn) ~ ., data = data_train_tune_knn, method = "knn",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid)
+
+trainmodel_tuned_knn
+```
+The final value used for the model was k = 173.
+
+###  Train Model
+```{r}
+library(class)
+ksize<-round(sqrt(nrow(data_train)),0) 
+knn_base_model <- knn(data_train, data_test, data_train_labels, k = 173)
+```
+
+### Evaluate Model
+```{r}
+library(caret)
+confusionMatrix(as.factor(knn_base_model), as.factor(data_test_labels), positive = "1")
+```
+The tuned KNN Model (k=173) had the following performance:
+- Accuracy: 76.93%
+- Kappa: 0.4109
+
+
 
