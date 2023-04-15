@@ -310,61 +310,6 @@ The ANN simple model's confusion matrix indicates that it correctly classified *
 
 
 
-## ANN (medium-sized model)
-
-### Train Model
-```{r}
-library(neuralnet)
-#ann_mid_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 5, stepmax = 1e8)
-#saveRDS(ann_mid_model, file = 'ann_mid_model.rds')
-ann_mid_model <- readRDS('ann_mid_model.rds')
-plot(ann_mid_model)
-```
-
-### Predict
-```{r}
-ann_mid_model_pred <- predict(ann_mid_model, data_test)
-#summary(ann_mid_model_pred)
-ann_mid_pred <- ifelse(ann_mid_model_pred >= 0.5, 1, 0)
-```
-
-### Evaluate Model
-```{r}
-confusionMatrix(as.factor(ann_mid_pred), as.factor(data_test_labels), positive = "1")
-```
-The medium-sized ANN model achieved an accuracy of 77.44% on the binary classification problem, with a moderate agreement (kappa = 0.4041) between the model's predictions and actual outcomes. The model correctly classified 1117 negative instances and 246 positive instances, but misclassified 238 negative instances as positive and 159 positive instances as negative. The p-value for the accuracy being greater than the no information rate (NIR) of 0.725 was 1.249e-06, indicating that the model's performance was significantly better than random guessing.
-
-## ANN (high model)
-
-### Train Model
-```{r}
-library(neuralnet)
-#ann_high_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = c(5, 3), stepmax = 1e8)
-#saveRDS(ann_high_model, file = 'ann_high_model.rds')
-ann_high_model <- readRDS('ann_high_model.rds')
-#plot(ann_high_model)
-```
-
-
-### Predict
-```{r}
-ann_high_model_pred <- predict(ann_high_model, data_test)
-#summary(ann_high_model_pred)
-ann_high_pred <- ifelse(ann_high_model_pred >= 0.5, 1, 0)
-```
-
-
-### Evaluate Model
-```{r}
-confusionMatrix(as.factor(ann_high_pred), as.factor(data_test_labels), positive = "1")
-```
-
-
-- ANN simple model -> Accuracy: 76.53 %, Kappa: 0.3892
-- **ANN medium model = 5 -> Accuracy: 77.44%, Kappa: 0.4041**
-- ANN high model = (5,3) -> Accuracy: 76.14%, Kappa: 0.3726 
-
-
 ## Decision Tree
 
 ### Build Model
@@ -515,6 +460,60 @@ confusionMatrix(as.factor(knn_base_model), as.factor(data_test_labels), positive
 The tuned KNN Model (k=173) had the following performance:
 - Accuracy: 76.93%
 - Kappa: 0.4109
+
+## ANN (medium-sized model)
+
+### Train Model
+```{r}
+library(neuralnet)
+#ann_mid_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 5, stepmax = 1e8)
+#saveRDS(ann_mid_model, file = 'ann_mid_model.rds')
+ann_mid_model <- readRDS('ann_mid_model.rds')
+plot(ann_mid_model)
+```
+
+### Predict
+```{r}
+ann_mid_model_pred <- predict(ann_mid_model, data_test)
+#summary(ann_mid_model_pred)
+ann_mid_pred <- ifelse(ann_mid_model_pred >= 0.5, 1, 0)
+```
+
+### Evaluate Model
+```{r}
+confusionMatrix(as.factor(ann_mid_pred), as.factor(data_test_labels), positive = "1")
+```
+The medium-sized ANN model achieved an accuracy of 77.44% on the binary classification problem, with a moderate agreement (kappa = 0.4041) between the model's predictions and actual outcomes. The model correctly classified 1117 negative instances and 246 positive instances, but misclassified 238 negative instances as positive and 159 positive instances as negative. The p-value for the accuracy being greater than the no information rate (NIR) of 0.725 was 1.249e-06, indicating that the model's performance was significantly better than random guessing.
+
+## ANN (high model)
+
+### Train Model
+```{r}
+library(neuralnet)
+#ann_high_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = c(5, 3), stepmax = 1e8)
+#saveRDS(ann_high_model, file = 'ann_high_model.rds')
+ann_high_model <- readRDS('ann_high_model.rds')
+#plot(ann_high_model)
+```
+
+
+### Predict
+```{r}
+ann_high_model_pred <- predict(ann_high_model, data_test)
+#summary(ann_high_model_pred)
+ann_high_pred <- ifelse(ann_high_model_pred >= 0.5, 1, 0)
+```
+
+
+### Evaluate Model
+```{r}
+confusionMatrix(as.factor(ann_high_pred), as.factor(data_test_labels), positive = "1")
+```
+
+
+- ANN simple model -> Accuracy: 76.53 %, Kappa: 0.3892
+- **ANN medium model = 5 -> Accuracy: 77.44%, Kappa: 0.4041**
+- ANN high model = (5,3) -> Accuracy: 76.14%, Kappa: 0.3726 
 
 ## Decision Tree
 
