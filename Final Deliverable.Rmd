@@ -109,17 +109,6 @@ data$PaymentMethod <- as.factor(data$PaymentMethod)
 data$Churn <- ifelse(data$Churn == "Yes", 1, 0)
 data$customerID <- NULL
 
-# Normalize Data
-normalize <- function(x){ # new function
-  (x - min(x))/(max(x)-min(x))
-}
-
-data$tenure <- normalize(data$tenure)
-data$MonthlyCharges <- normalize(data$MonthlyCharges)
-data$TotalCharges <- normalize(data$TotalCharges)
-
-str(data)
-summary(data)
 ```
 
 
@@ -173,12 +162,6 @@ Before training, we divided the dataset into test data (25%) and train data (75%
 ## Logistic Regression
 
 ### Train Model
-```{r}
-lr_base_model <- glm(data_train_labels ~ ., data = data_train, family = "binomial")
-summary(lr_base_model)
-```
-
-
 ```{r}
 lr_base_model <- glm(data_train_labels ~ ., data = data_train, family = "binomial")
 summary(lr_base_model)
@@ -264,63 +247,6 @@ confusionMatrix(as.factor(ann_simple_pred), as.factor(data_test_labels), positiv
 ```
 The ANN simple model's confusion matrix indicates that it correctly classified **79.03%** of instances with 254 true positives and 139 false positives. The model's accuracy is significantly better than random guessing with a p-value of 1.689e-10, and its kappa coefficient which is **0.4416** indicates a moderate agreement with the actual outcomes.
 
-
-
-## ANN (medium-sized model)
-
-### Train Model
-```{r}
-library(neuralnet)
-#ann_mid_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 5, stepmax = 1e8)
-#saveRDS(ann_mid_model, file = 'ann_mid_model.rds')
-ann_mid_model <- readRDS('ann_mid_model.rds')
-plot(ann_mid_model)
-```
-
-### Predict
-```{r}
-ann_mid_model_pred <- predict(ann_mid_model, data_test)
-#summary(ann_mid_model_pred)
-ann_mid_pred <- ifelse(ann_mid_model_pred >= 0.5, 1, 0)
-```
-
-### Evaluate Model
-```{r}
-confusionMatrix(as.factor(ann_mid_pred), as.factor(data_test_labels), positive = "1")
-```
-The medium-sized ANN model achieved an accuracy of 77.44% on the binary classification problem, with a moderate agreement (kappa = 0.4041) between the model's predictions and actual outcomes. The model correctly classified 1117 negative instances and 246 positive instances, but misclassified 238 negative instances as positive and 159 positive instances as negative. The p-value for the accuracy being greater than the no information rate (NIR) of 0.725 was 1.249e-06, indicating that the model's performance was significantly better than random guessing.
-
-## ANN (high model)
-
-### Train Model
-```{r}
-library(neuralnet)
-#ann_high_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = c(5, 3), stepmax = 1e8)
-#saveRDS(ann_high_model, file = 'ann_high_model.rds')
-ann_high_model <- readRDS('ann_high_model.rds')
-#plot(ann_high_model)
-```
-
-
-### Predict
-```{r}
-ann_high_model_pred <- predict(ann_high_model, data_test)
-#summary(ann_high_model_pred)
-ann_high_pred <- ifelse(ann_high_model_pred >= 0.5, 1, 0)
-```
-
-
-### Evaluate Model
-```{r}
-confusionMatrix(as.factor(ann_high_pred), as.factor(data_test_labels), positive = "1")
-```
-
-
-
-- ANN simple model -> Accuracy: 76.53 %, Kappa: 0.3892
-- **ANN medium model = 5 -> Accuracy: 77.44%, Kappa: 0.4041**
-- ANN high model = (5,3) -> Accuracy: 76.14%, Kappa: 0.3726 
-
         
 
 ## Decision Tree
@@ -368,13 +294,13 @@ A simple model using random forest had the following performance:
 - Accuracy: 78.69%
 - Kappa: 0.4223
 
-# Second-level Decision Tree
+# Second-level Decision Tree with Simple Models
 Combine the five prediction vectors and the response variable into a Data Frame. 
 You will now have a data frame of five columns.
 ```{r}
 df <- data.frame("Logistic" = lr_binary_pred,
                   "KNN" = knn_base_model,
-                  "ANN" = ann_mid_pred,
+                  "ANN" = ann_simple_pred,
                   "Decision Tree" = tree_pred,
                   "Random Forest" = rf_pred,
                  "labels" = data_test_labels) # add y label
@@ -410,7 +336,7 @@ tree_preds_combined <- predict(tree_model_combined, test_combined)
 library(caret)
 confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
 ```
-
+Second-level Decision Tree -> Accuracy : 79.26%, Kappa : 0.463
 
 ```{r}
 plot(tree_model_combined)
@@ -421,4 +347,122 @@ plot(tree_model_combined)
 - ANN -> Accuracy : 77.44%, Kappa: 0.4041,
 - Decision Tree -> Accuracy : 78.75%, Kappa : 0.3937
 - Random Forest -> Accuracy : 79.6%, Kappa : 0.4405
-- **Second-level Decision Tree -> Accuracy : 80.4%, Kappa : 0.5108**
+- Second-level Decision Tree -> Accuracy : 79.26%, Kappa : 0.463
+
+
+# Improved Models
+
+## ANN (medium-sized model)
+
+### Train Model
+```{r}
+library(neuralnet)
+#ann_mid_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 5, stepmax = 1e8)
+#saveRDS(ann_mid_model, file = 'ann_mid_model.rds')
+ann_mid_model <- readRDS('ann_mid_model.rds')
+plot(ann_mid_model)
+```
+
+### Predict
+```{r}
+ann_mid_model_pred <- predict(ann_mid_model, data_test)
+#summary(ann_mid_model_pred)
+ann_mid_pred <- ifelse(ann_mid_model_pred >= 0.5, 1, 0)
+```
+
+### Evaluate Model
+```{r}
+confusionMatrix(as.factor(ann_mid_pred), as.factor(data_test_labels), positive = "1")
+```
+The medium-sized ANN model achieved an accuracy of 77.44% on the binary classification problem, with a moderate agreement (kappa = 0.4041) between the model's predictions and actual outcomes. The model correctly classified 1117 negative instances and 246 positive instances, but misclassified 238 negative instances as positive and 159 positive instances as negative. The p-value for the accuracy being greater than the no information rate (NIR) of 0.725 was 1.249e-06, indicating that the model's performance was significantly better than random guessing.
+
+
+## ANN (high model)
+
+### Train Model
+```{r}
+library(neuralnet)
+#ann_high_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = c(5, 3), stepmax = 1e8)
+#saveRDS(ann_high_model, file = 'ann_high_model.rds')
+ann_high_model <- readRDS('ann_high_model.rds')
+#plot(ann_high_model)
+```
+
+
+### Predict
+```{r}
+ann_high_model_pred <- predict(ann_high_model, data_test)
+#summary(ann_high_model_pred)
+ann_high_pred <- ifelse(ann_high_model_pred >= 0.5, 1, 0)
+```
+
+
+### Evaluate Model
+```{r}
+confusionMatrix(as.factor(ann_high_pred), as.factor(data_test_labels), positive = "1")
+```
+
+
+- ANN simple model -> Accuracy: 76.53 %, Kappa: 0.3892
+- **ANN medium model = 5 -> Accuracy: 77.44%, Kappa: 0.4041**
+- ANN high model = (5,3) -> Accuracy: 76.14%, Kappa: 0.3726 
+
+## Auto-Tune KNN Model
+
+### Prepare Data for Auti-Tune KNN Model
+```{r}
+# consider 25% of the data as train
+set.seed(12345)
+# data_test_set <- sample(1:nrow(datamm_norm), nrow(datamm_norm) * 0.25) 
+# Depending on R-version and computer, different rows may be selected. 
+# If that happens, results are different. 
+
+# Create a train set and test set
+data_train_tune_knn <- datamm_norm[-data_test_set, ] 
+data_test_tune_knn <- datamm_norm[data_test_set, ]
+
+#Now the response (aka Labels) - only the Churn column
+#data_train_labels <- datamm_norm[-data_test_set, "Churn"]
+#data_test_labels <- datamm_norm[data_test_set, "Churn"]
+```
+
+
+```{r}
+library(caret)
+
+set.seed(12345)
+
+ctrl <- trainControl(method = "cv", number = 4,
+                     selectionFunction = "oneSE")
+
+
+grid <- expand.grid(k = c((ksize-50), (ksize), (ksize+50), (ksize+100), (ksize+150),  (ksize+200)))
+
+
+trainmodel_tuned_knn <- train(as.factor(Churn) ~ ., data = data_train_tune_knn, method = "knn",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid)
+
+trainmodel_tuned_knn
+```
+The final value used for the model was k = 173.
+
+###  Train Model
+```{r}
+library(class)
+ksize<-round(sqrt(nrow(data_train)),0) 
+knn_base_model <- knn(data_train, data_test, data_train_labels, k = 173)
+```
+
+### Evaluate Model
+```{r}
+library(caret)
+confusionMatrix(as.factor(knn_base_model), as.factor(data_test_labels), positive = "1")
+```
+The tuned KNN Model (k=173) had the following performance:
+- Accuracy: 76.93%
+- Kappa: 0.4109
+
+
+
