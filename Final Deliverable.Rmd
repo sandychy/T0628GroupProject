@@ -757,10 +757,12 @@ confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined),
 
 ### Build Error Cost Model
 
-For the cost, we assigned 2 for false negatives and 1 for false positives.
+We want to reduce the false negatives since losing customers who were predicted to not leave would bring damage to the company.
+
+For the cost, we assigned 5 for false negatives and 1 for false positives.
 
 ```{r}
-error_cost = matrix(c(0,1,2,0), nrow=2) # Cost - FN=8, FP=1. TP and TN don't have costs, so 0.
+error_cost = matrix(c(0,1,5,0), nrow=2) # Cost - FN=5, FP=1. TP and TN don't have costs, so 0.
 error_cost
 
 # build decision tree model with error cost
@@ -771,9 +773,9 @@ errorpred <- predict(errormodel, test_combined)
 # evaluate the model performance
 confusionMatrix(as.factor(errorpred), as.factor(test_labels_combined), positive = "1")
 ```
-As a result, the number of false negatives was decreased to 31 (was 46) while the number of false positives increased to 35 (was 27).
+As a result, the number of false negatives was decreased to 28 (was 46) while the number of false positives increased to 45 (was 27).
 
-The accuracy and the kappa increased to 81.25% and 0.5472 respectively.
+The accuracy remained same and the kappa increased to 0.5175.
 
-- Accuracy: 81.25%
-- Kappa: 0.5472
+- Accuracy: 79.26%
+- Kappa: 0.5175
