@@ -471,7 +471,7 @@ confusionMatrix(as.factor(lr_try1_binary_pred), as.factor(data_test_labels), pos
 
 ## Auto-Tune KNN Model
 
-### Prepare Data for Auti-Tune KNN Model
+### Prepare Data for Auto-Tune KNN Model
 ```{r}
 # consider 25% of the data as train
 set.seed(12345)
@@ -753,3 +753,27 @@ From the confusion matrix of the second-level decision tree with simple models, 
 ```{r}
 confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
 ```
+
+
+### Build Error Cost Model
+
+For the cost, we assigned 2 for false negatives and 1 for false positives.
+
+```{r}
+error_cost = matrix(c(0,1,2,0), nrow=2) # Cost - FN=8, FP=1. TP and TN don't have costs, so 0.
+error_cost
+
+# build decision tree model with error cost
+errormodel <- C5.0(as.factor(train_labels_combined) ~ ., data = train_combined, costs = error_cost)
+
+# make predictions on test data
+errorpred <- predict(errormodel, test_combined)
+# evaluate the model performance
+confusionMatrix(as.factor(errorpred), as.factor(test_labels_combined), positive = "1")
+```
+As a result, the number of false negatives was decreased to 31 (was 46) while the number of false positives increased to 35 (was 27).
+
+The accuracy and the kappa increased to 81.25% and 0.5472 respectively.
+
+- Accuracy: 81.25%
+- Kappa: 0.5472

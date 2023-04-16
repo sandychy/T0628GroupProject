@@ -2309,7 +2309,7 @@ summary(dt_base_model)</code></pre>
 ## C5.0.formula(formula = as.factor(data_train_labels) ~ ., data = data_train)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 00:17:34 2023
+## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 00:42:07 2023
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -2706,9 +2706,9 @@ confusionMatrix(as.factor(lr_try1_binary_pred), as.factor(data_test_labels), pos
 <div id="auto-tune-knn-model" class="section level2" number="7.2">
 <h2><span class="header-section-number">7.2</span> Auto-Tune KNN
 Model</h2>
-<div id="prepare-data-for-auti-tune-knn-model" class="section level3" number="7.2.1">
+<div id="prepare-data-for-auto-tune-knn-model" class="section level3" number="7.2.1">
 <h3><span class="header-section-number">7.2.1</span> Prepare Data for
-Auti-Tune KNN Model</h3>
+Auto-Tune KNN Model</h3>
 <pre class="r"><code># consider 25% of the data as train
 set.seed(12345)
 # Create a train set and test set
@@ -2972,7 +2972,7 @@ summary(dt_tune_model)</code></pre>
 ##  data_train, trials = 10)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 00:17:54 2023
+## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 00:42:27 2023
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -3665,6 +3665,60 @@ would be predicted to leave.</p>
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
+<div id="build-error-cost-model" class="section level3" number="8.4.1">
+<h3><span class="header-section-number">8.4.1</span> Build Error Cost
+Model</h3>
+<p>For the cost, we assigned 2 for false negatives and 1 for false
+positives.</p>
+<pre class="r"><code>error_cost = matrix(c(0,1,2,0), nrow=2) # Cost - FN=8, FP=1. TP and TN don&#39;t have costs, so 0.
+error_cost</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    0    2
+## [2,]    1    0</code></pre>
+<pre class="r"><code># build decision tree model with error cost
+errormodel &lt;- C5.0(as.factor(train_labels_combined) ~ ., data = train_combined, costs = error_cost)</code></pre>
+<pre><code>## Warning: no dimnames were given for the cost matrix; the factor levels will be
+## used</code></pre>
+<pre class="r"><code># make predictions on test data
+errorpred &lt;- predict(errormodel, test_combined)
+# evaluate the model performance
+confusionMatrix(as.factor(errorpred), as.factor(test_labels_combined), positive = &quot;1&quot;)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0 216  31
+##          1  35  70
+##                                           
+##                Accuracy : 0.8125          
+##                  95% CI : (0.7677, 0.8519)
+##     No Information Rate : 0.7131          
+##     P-Value [Acc &gt; NIR] : 1.181e-05       
+##                                           
+##                   Kappa : 0.5472          
+##                                           
+##  Mcnemar&#39;s Test P-Value : 0.7119          
+##                                           
+##             Sensitivity : 0.6931          
+##             Specificity : 0.8606          
+##          Pos Pred Value : 0.6667          
+##          Neg Pred Value : 0.8745          
+##              Prevalence : 0.2869          
+##          Detection Rate : 0.1989          
+##    Detection Prevalence : 0.2983          
+##       Balanced Accuracy : 0.7768          
+##                                           
+##        &#39;Positive&#39; Class : 1               
+## </code></pre>
+<p>As a result, the number of false negatives was decreased to 31 (was
+46) while the number of false positives increased to 35 (was 27).</p>
+<p>The accuracy and the kappa increased to 81.25% and 0.5472
+respectively.</p>
+<ul>
+<li>Accuracy: 81.25%</li>
+<li>Kappa: 0.5472</li>
+</ul>
+</div>
 </div>
 </div>
 
