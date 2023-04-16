@@ -403,7 +403,7 @@ confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined),
 - ANN -> Accuracy : 79.03%, Kappa: 0.4416
 - Decision Tree -> Accuracy : 78.75%, Kappa : 0.4494
 - Random Forest -> Accuracy : 78.69%, Kappa : 0.4223
-- **Second-level Decision Tree -> Accuracy : 79.26%, Kappa : 0.0463**
+- **Second-level Decision Tree -> Accuracy : 79.26%, Kappa : 0.463**
 
 
 # Improving Models
@@ -421,6 +421,8 @@ We try to only use the factors with significant effect:
 - TotalCharges
 ```{r}
 lr_try1_model <- glm(data_train_labels ~ tenure + ContractOne.year + ContractTwo.year + PaperlessBillingYes + PaymentMethodElectronic.check + TotalCharges, data = data_train, family = "binomial")
+
+summary(lr_try1_model)
 ```
 
 ### Predict
@@ -682,12 +684,14 @@ Random Forest
 
 Second-level Decision Tree (simple model)
 
-  - Accuracy : 80.4%
-  - **Kappa : 0.5108**
+  - Accuracy : 79.26%
+  - **Kappa : 0.463**
 
 # Combined Predictions with Optimized Models
 
 ## Combine Prediction Vectors
+
+With the predictions that have the highest kappa, we created a data frame of combined predictions.
 ```{r}
 df_opt <- data.frame("Logistic" = lr_binary_pred,
                   "KNN" = knn_tuned_model,
@@ -727,5 +731,13 @@ Second-level Decision Tree (optimized model)
   
 Second-level Decision Tree (simple model)
 
-  - Accuracy : 80.4%
-  - **Kappa : 0.5108**
+  - Accuracy : 79.26%
+  - **Kappa : 0.463**
+
+## Cost Matrix
+
+
+From the confusion matrix of the second-level decision tree with simple models, 46 out of 352 (13%) were false negative and 27 were false positive. That means that out of 100 customers, 13 customers who will leave would be predicted to not leave and 7 customers continuing to stay would be predicted to leave.
+```{r}
+confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
+```
