@@ -70,45 +70,66 @@ library(ggplot2)
 library(dplyr)
 library(gridExtra)
 data <- read.csv("Telco Customer Churn.csv")
-# 
-# p1 <- ggplot(data, aes(x=gender)) + ggtitle("Gender") + xlab("Gender") +
-#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-# p2 <- ggplot(data, aes(x=SeniorCitizen)) + ggtitle("Senior Citizen") + xlab("Senior Citizen") + 
-#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-# p3 <- ggplot(data, aes(x=Partner)) + ggtitle("Partner") + xlab("Partner") + 
-#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-# p4 <- ggplot(data, aes(x=Dependents)) + ggtitle("Dependents") + xlab("Dependents") +
-#   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-# grid.arrange(p1, p2, p3, p4, ncol=2)
-# 
-# # Customer churn rate
-# churn_breakdown <- data %>% 
-#   group_by(Churn) %>% 
-#   count(Churn) %>% 
-#   mutate(perc = n/nrow(data) * 100) %>% 
-#   rename(customers = n)
-# churn_breakdown
-# 
-# prop.table(table(data$gender, data$Churn), 1)
-#  
-# # Churn rate by gender
-# ggplot(data = data, aes(x=gender, fill =  Churn)) + geom_bar(position = "fill", width=0.45) + 
-#     scale_fill_manual(values = c("#0F4C75", "#a6cee3")) + 
-#     theme(
-#     plot.background = element_blank(),
-#     panel.grid.major = element_blank(),
-#     panel.border = element_blank(),
-#     plot.title = element_text(hjust = 0.5),
-#     text=element_text(size=12)) + 
-#     labs(x = " ", title = "Churn by Gender")
-# 
-# ggplot(data = data, aes(x = gender, y = MonthlyCharges, fill = gender))+geom_boxplot() + stat_summary(fun=mean, geom="point", shape=20, size=8, color="red", fill="red")
-# ```
-# 
-# ## Get Data
-# ```{r}
-# data <- read.csv("Telco Customer Churn.csv")
-# str(data)
+
+p1 <- ggplot(data, aes(x=gender)) + ggtitle("Gender") + xlab("Gender") +
+   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p2 <- ggplot(data, aes(x=SeniorCitizen)) + ggtitle("Senior Citizen") + xlab("Senior Citizen") + 
+   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p3 <- ggplot(data, aes(x=Partner)) + ggtitle("Partner") + xlab("Partner") + 
+   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p4 <- ggplot(data, aes(x=Dependents)) + ggtitle("Dependents") + xlab("Dependents") +
+   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+grid.arrange(p1, p2, p3, p4, ncol=2)
+
+p5 <- ggplot(data, aes(x=PhoneService)) + ggtitle("Phone Service") + xlab("Phone Service") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p6 <- ggplot(data, aes(x=MultipleLines)) + ggtitle("Multiple Lines") + xlab("Multiple Lines") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p7 <- ggplot(data, aes(x=InternetService)) + ggtitle("Internet Service") + xlab("Internet Service") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p8 <- ggplot(data, aes(x=OnlineSecurity)) + ggtitle("Online Security") + xlab("Online Security") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+grid.arrange(p5, p6, p7, p8, ncol=2)
+
+p9 <- ggplot(data, aes(x=OnlineBackup)) + ggtitle("Online Backup") + xlab("Online Backup") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p10 <- ggplot(data, aes(x=DeviceProtection)) + ggtitle("Device Protection") + xlab("Device Protection") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p11 <- ggplot(data, aes(x=TechSupport)) + ggtitle("Tech Support") + xlab("Tech Support") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+p12 <- ggplot(data, aes(x=StreamingTV)) + ggtitle("Streaming TV") + xlab("Streaming TV") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+grid.arrange(p9, p10, p11, p12, ncol=2)
+
+ 
+# Customer churn rate
+churn_breakdown <- data %>% 
+   group_by(Churn) %>% 
+   count(Churn) %>% 
+   mutate(perc = n/nrow(data) * 100) %>% 
+   rename(customers = n)
+ churn_breakdown
+ 
+prop.table(table(data$gender, data$Churn), 1)
+ 
+# Churn rate by gender
+ggplot(data = data, aes(x=gender, fill =  Churn)) + geom_bar(position = "fill", width=0.45) + 
+     scale_fill_manual(values = c("#0F4C75", "#a6cee3")) + 
+     theme(
+     plot.background = element_blank(),
+     panel.grid.major = element_blank(),
+     panel.border = element_blank(),
+     plot.title = element_text(hjust = 0.5),
+     text=element_text(size=12)) + 
+     labs(x = " ", title = "Churn by Gender")
+ 
+ggplot(data = data, aes(x = gender, y = MonthlyCharges, fill = gender))+geom_boxplot() + stat_summary(fun=mean, geom="point", shape=20, size=8, color="red", fill="red")
+```
+ 
+## Get Data
+```{r}
+data <- read.csv("Telco Customer Churn.csv")
+#str(data)
 #summary(data)
 #View(data)
 ```
@@ -248,6 +269,9 @@ With the confusionMatrix, we evaluated our prediction from the logistic regressi
 ```{r}
 library(caret)
 confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test_labels), positive = "1")
+
+#CrossTable(x = as.factor(data_test_labels), y = lr_binary_pred, 
+#           prop.chisq=FALSE)
 ```
 The accuracy is **77.78%** and Kappa is **0.421**. While the Kappa seems to be fine, the accuracy of the model can be improved with different analytical approaches.
 
@@ -266,6 +290,12 @@ knn_base_model <- knn(data_train, data_test, data_train_labels, k = ksize)
 ```{r}
 library(caret)
 confusionMatrix(as.factor(knn_base_model), as.factor(data_test_labels), positive = "1")
+
+#library(gmodels)
+#CrossTable(x = as.factor(data_test_labels), y = knn_base_model, 
+#           prop.chisq=FALSE)
+
+
 ```
 The confusion matrix shows the performance of the k-nearest neighbors (KNN) model on a binary classification problem with two classes: 0 (no churn) and 1 (churn). The model predicted 1063 true negatives (TN), 272 true positives (TP), 213 false positives (FP), and 212 false negatives (FN).
 
@@ -280,7 +310,7 @@ library(neuralnet)
 #ann_simple_model <- neuralnet(datamm_train_labels  ~., data = datamm_train, hidden = 1)
 #saveRDS(ann_simple_model, file = 'ann_simple_model.rds')
 ann_simple_model <- readRDS('ann_simple_model.rds')
-#plot(ann_simple_model)
+# plot(ann_simple_model)
 ```
 
 ### Predict
@@ -293,6 +323,9 @@ ann_simple_pred <- ifelse(ann_simple_model_pred >= 0.5, 1, 0)
 ### Evaluate Model
 ```{r}
 confusionMatrix(as.factor(ann_simple_pred), as.factor(data_test_labels), positive = "1")
+
+#CrossTable(x = as.factor(data_test_labels), y = ann_simple_pred, 
+#          prop.chisq=FALSE)
 ```
 The ANN simple model's confusion matrix indicates that it correctly classified **79.03%** of instances with 254 true positives and 139 false positives. The model's accuracy is significantly better than random guessing with a p-value of 1.689e-10, and its kappa coefficient which is **0.4416** indicates a moderate agreement with the actual outcomes.
 
@@ -313,6 +346,9 @@ From the decision tree model, we could learn that the Contract column was used f
 ```{r}
 tree_pred <- predict(dt_base_model, data_test)
 confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive="1")
+
+#CrossTable(x = as.factor(data_test_labels), y = tree_pred, 
+#          prop.chisq=FALSE)
 ```
 A simple model using decision tree had the following performance: 
 
@@ -334,6 +370,9 @@ print(rf_base_model)
 ```{r}
 rf_pred <- predict(rf_base_model, data_test)
 confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive="1")
+
+#CrossTable(x = as.factor(data_test_labels), y = rf_pred, 
+#          prop.chisq=FALSE)
 ```
 A simple model using random forest had the following performance: 
 
@@ -379,6 +418,9 @@ tree_preds_combined <- predict(tree_model_combined, test_combined)
 # evaluate the model performance
 library(caret)
 confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
+
+#CrossTable(x = as.factor(test_labels_combined), y = tree_preds_combined, 
+#          prop.chisq=FALSE)
 ```
 
 
