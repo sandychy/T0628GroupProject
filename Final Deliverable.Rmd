@@ -361,23 +361,31 @@ A simple model using decision tree had the following performance:
 ### Build Model
 ```{r}
 library(randomForest)
-rf_base_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE)
+#rf_base_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE)
+#saveRDS(rf_base_model, file = 'rf_base_model.rds')
+
+rf_base_model <- readRDS('rf_base_model.rds')
 summary(rf_base_model)
 print(rf_base_model)
 ```
 
 ### Predict and Evaluate
 ```{r}
-rf_pred <- predict(rf_base_model, data_test)
-confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive="1")
+#rf_pred <- predict(rf_base_model, data_test)
+#write.csv(rf_pred, file = "rf_pred.csv")
+
+rf_pred_r <- read.csv("rf_pred.csv")
+confusionMatrix(as.factor(rf_pred_r$x), as.factor(data_test_labels), positive="1")
 
 #CrossTable(x = as.factor(data_test_labels), y = rf_pred, 
 #          prop.chisq=FALSE)
 ```
+
+
 A simple model using random forest had the following performance: 
 
-- Accuracy: 78.69%
-- Kappa: 0.4239
+- Accuracy: 78.52%
+- Kappa: 0.4229
 
 # Combined Predictions with Simple Models
 
@@ -389,7 +397,7 @@ df <- data.frame("Logistic" = lr_binary_pred,
                   "KNN" = knn_base_model,
                   "ANN" = ann_simple_pred,
                   "Decision Tree" = tree_pred,
-                  "Random Forest" = rf_pred,
+                  "Random Forest" = rf_pred_r,
                  "labels" = data_test_labels) # add y label
 #View(df)
 ```
@@ -432,7 +440,7 @@ confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined),
 - KNN -> Accuracy : 75.85, Kappa : 0.3948
 - ANN -> Accuracy : 79.03%, Kappa: 0.4416
 - Decision Tree -> Accuracy : 78.75%, Kappa : 0.4494
-- Random Forest -> Accuracy : 78.69%, Kappa : 0.4223
+- Random Forest -> Accuracy : 78.52%, Kappa : 0.4229
 - **Second-level Decision Tree -> Accuracy : 79.26%, Kappa : 0.463**
 
 
@@ -625,20 +633,26 @@ Using the parameter and the value, we built a new random forest model.
 
 ### Build Model
 ```{r}
-rf_tune_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE, mtry=3)
+#rf_tune_model <- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE, mtry=3)
+#saveRDS(rf_tune_model, file = 'rf_tune_model.rds')
+
+rf_tune_model <- readRDS('rf_tune_model.rds')
 summary(rf_tune_model)
 print(rf_tune_model)
 ```
 
 ### Predict and Evaluate
 ```{r}
-rf_tune_pred <- predict(rf_tune_model, data_test)
-confusionMatrix(as.factor(rf_tune_pred), as.factor(data_test_labels), positive="1")
+#rf_tune_pred <- predict(rf_tune_model, data_test)
+#write.csv(rf_tune_pred, file = "rf_tune_pred.csv")
+
+rf_tune_pred_r <- read.csv("rf_tune_pred.csv")
+confusionMatrix(as.factor(rf_tune_pred_r$x), as.factor(data_test_labels), positive="1")
 ```
 The random forest model with a tuned parameter had the following performance: 
 
-- Accuracy: 79.38% (simple model: 78.69%)
-- Kappa: 0.4281 (simple model: 0.4223)
+- Accuracy: 79.32% (simple model: 78.52%)
+- Kappa: 0.4334 (simple model: 0.4229)
 
 
 
@@ -688,11 +702,11 @@ Decision Tree
 Random Forest
 
 - simple model
-  - Accuracy : 78.69%
-  - Kappa : 0.4239
+  - Accuracy : 78.52%
+  - Kappa : 0.4229
 - auto-tuned model
-  - Accuracy: 79.38% 
-  - **Kappa: 0.4281**
+  - Accuracy: 79.32% 
+  - **Kappa: 0.4334**
 
 Second-level Decision Tree (simple model)
 
@@ -709,7 +723,7 @@ df_opt <- data.frame("Logistic" = lr_binary_pred,
                   "KNN" = knn_tuned_model,
                   "ANN" = ann_mid_pred,
                   "Decision Tree" = tree_pred,
-                  "Random Forest" = rf_tune_pred,
+                  "Random Forest" = rf_tune_pred_r,
                  "labels" = data_test_labels) # add y label
 ```
 
@@ -738,8 +752,8 @@ confusionMatrix(as.factor(tree_preds_opt), as.factor(test_labels_opt), positive 
 
 Second-level Decision Tree (optimized model)
 
-  - Accuracy : 77.84%
-  - Kappa : 0.4096 
+  - Accuracy : 79.26%
+  - Kappa : 0.4527 
   
 Second-level Decision Tree (simple model)
 

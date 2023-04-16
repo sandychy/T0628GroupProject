@@ -2309,7 +2309,7 @@ summary(dt_base_model)</code></pre>
 ## C5.0.formula(formula = as.factor(data_train_labels) ~ ., data = data_train)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 00:42:07 2023
+## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 18:01:16 2023
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -2457,7 +2457,10 @@ confusionMatrix(as.factor(tree_pred), as.factor(data_test_labels), positive=&quo
 <pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
 ## 
 ##     margin</code></pre>
-<pre class="r"><code>rf_base_model &lt;- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE)
+<pre class="r"><code>#rf_base_model &lt;- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE)
+#saveRDS(rf_base_model, file = &#39;rf_base_model.rds&#39;)
+
+rf_base_model &lt;- readRDS(&#39;rf_base_model.rds&#39;)
 summary(rf_base_model)</code></pre>
 <pre><code>##                 Length   Class  Mode     
 ## call                   4 -none- call     
@@ -2496,32 +2499,35 @@ summary(rf_base_model)</code></pre>
 <div id="predict-and-evaluate-1" class="section level3" number="5.5.2">
 <h3><span class="header-section-number">5.5.2</span> Predict and
 Evaluate</h3>
-<pre class="r"><code>rf_pred &lt;- predict(rf_base_model, data_test)
-confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive=&quot;1&quot;)</code></pre>
+<pre class="r"><code>#rf_pred &lt;- predict(rf_base_model, data_test)
+#write.csv(rf_pred, file = &quot;rf_pred.csv&quot;)
+
+rf_pred_r &lt;- read.csv(&quot;rf_pred.csv&quot;)
+confusionMatrix(as.factor(rf_pred_r$x), as.factor(data_test_labels), positive=&quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 1138  242
-##          1  138  242
+##          0 1139  241
+##          1  137  243
 ##                                           
-##                Accuracy : 0.7841          
-##                  95% CI : (0.7641, 0.8031)
+##                Accuracy : 0.7852          
+##                  95% CI : (0.7653, 0.8042)
 ##     No Information Rate : 0.725           
-##     P-Value [Acc &gt; NIR] : 7.584e-09       
+##     P-Value [Acc &gt; NIR] : 3.912e-09       
 ##                                           
-##                   Kappa : 0.4198          
+##                   Kappa : 0.4229          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 1.265e-07       
+##  Mcnemar&#39;s Test P-Value : 1.172e-07       
 ##                                           
-##             Sensitivity : 0.5000          
-##             Specificity : 0.8918          
-##          Pos Pred Value : 0.6368          
-##          Neg Pred Value : 0.8246          
+##             Sensitivity : 0.5021          
+##             Specificity : 0.8926          
+##          Pos Pred Value : 0.6395          
+##          Neg Pred Value : 0.8254          
 ##              Prevalence : 0.2750          
-##          Detection Rate : 0.1375          
+##          Detection Rate : 0.1381          
 ##    Detection Prevalence : 0.2159          
-##       Balanced Accuracy : 0.6959          
+##       Balanced Accuracy : 0.6973          
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
@@ -2529,8 +2535,8 @@ confusionMatrix(as.factor(rf_pred), as.factor(data_test_labels), positive=&quot;
 #          prop.chisq=FALSE)</code></pre>
 <p>A simple model using random forest had the following performance:</p>
 <ul>
-<li>Accuracy: 78.69%</li>
-<li>Kappa: 0.4239</li>
+<li>Accuracy: 78.52%</li>
+<li>Kappa: 0.4229</li>
 </ul>
 </div>
 </div>
@@ -2547,7 +2553,7 @@ Data Frame. You will now have a data frame of five columns.</p>
                   &quot;KNN&quot; = knn_base_model,
                   &quot;ANN&quot; = ann_simple_pred,
                   &quot;Decision Tree&quot; = tree_pred,
-                  &quot;Random Forest&quot; = rf_pred,
+                  &quot;Random Forest&quot; = rf_pred_r,
                  &quot;labels&quot; = data_test_labels) # add y label
 #View(df)</code></pre>
 </div>
@@ -2612,7 +2618,7 @@ confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined),
 <li>KNN -&gt; Accuracy : 75.85, Kappa : 0.3948</li>
 <li>ANN -&gt; Accuracy : 79.03%, Kappa: 0.4416</li>
 <li>Decision Tree -&gt; Accuracy : 78.75%, Kappa : 0.4494</li>
-<li>Random Forest -&gt; Accuracy : 78.69%, Kappa : 0.4223</li>
+<li>Random Forest -&gt; Accuracy : 78.52%, Kappa : 0.4229</li>
 <li><strong>Second-level Decision Tree -&gt; Accuracy : 79.26%, Kappa :
 0.463</strong></li>
 </ul>
@@ -2972,7 +2978,7 @@ summary(dt_tune_model)</code></pre>
 ##  data_train, trials = 10)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 00:42:27 2023
+## C5.0 [Release 2.07 GPL Edition]      Sun Apr 16 18:01:25 2023
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -3400,7 +3406,10 @@ model.</p>
 </div>
 <div id="build-model-2" class="section level3" number="7.6.2">
 <h3><span class="header-section-number">7.6.2</span> Build Model</h3>
-<pre class="r"><code>rf_tune_model &lt;- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE, mtry=3)
+<pre class="r"><code>#rf_tune_model &lt;- randomForest(as.factor(data_train_labels) ~ ., data=data_train, proximity=TRUE, mtry=3)
+#saveRDS(rf_tune_model, file = &#39;rf_tune_model.rds&#39;)
+
+rf_tune_model &lt;- readRDS(&#39;rf_tune_model.rds&#39;)
 summary(rf_tune_model)</code></pre>
 <pre><code>##                 Length   Class  Mode     
 ## call                   5 -none- call     
@@ -3439,40 +3448,43 @@ summary(rf_tune_model)</code></pre>
 <div id="predict-and-evaluate-3" class="section level3" number="7.6.3">
 <h3><span class="header-section-number">7.6.3</span> Predict and
 Evaluate</h3>
-<pre class="r"><code>rf_tune_pred &lt;- predict(rf_tune_model, data_test)
-confusionMatrix(as.factor(rf_tune_pred), as.factor(data_test_labels), positive=&quot;1&quot;)</code></pre>
+<pre class="r"><code>#rf_tune_pred &lt;- predict(rf_tune_model, data_test)
+#write.csv(rf_tune_pred, file = &quot;rf_tune_pred.csv&quot;)
+
+rf_tune_pred_r &lt;- read.csv(&quot;rf_tune_pred.csv&quot;)
+confusionMatrix(as.factor(rf_tune_pred_r$x), as.factor(data_test_labels), positive=&quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 1163  254
-##          1  113  230
+##          0 1160  248
+##          1  116  236
 ##                                           
-##                Accuracy : 0.7915          
-##                  95% CI : (0.7717, 0.8102)
+##                Accuracy : 0.7932          
+##                  95% CI : (0.7735, 0.8119)
 ##     No Information Rate : 0.725           
-##     P-Value [Acc &gt; NIR] : 8.096e-11       
+##     P-Value [Acc &gt; NIR] : 2.62e-11        
 ##                                           
-##                   Kappa : 0.4251          
+##                   Kappa : 0.4334          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 2.713e-13       
+##  Mcnemar&#39;s Test P-Value : 6.59e-12        
 ##                                           
-##             Sensitivity : 0.4752          
-##             Specificity : 0.9114          
-##          Pos Pred Value : 0.6706          
-##          Neg Pred Value : 0.8207          
+##             Sensitivity : 0.4876          
+##             Specificity : 0.9091          
+##          Pos Pred Value : 0.6705          
+##          Neg Pred Value : 0.8239          
 ##              Prevalence : 0.2750          
-##          Detection Rate : 0.1307          
-##    Detection Prevalence : 0.1949          
-##       Balanced Accuracy : 0.6933          
+##          Detection Rate : 0.1341          
+##    Detection Prevalence : 0.2000          
+##       Balanced Accuracy : 0.6983          
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
 <p>The random forest model with a tuned parameter had the following
 performance:</p>
 <ul>
-<li>Accuracy: 79.38% (simple model: 78.69%)</li>
-<li>Kappa: 0.4281 (simple model: 0.4223)</li>
+<li>Accuracy: 79.32% (simple model: 78.52%)</li>
+<li>Kappa: 0.4334 (simple model: 0.4229)</li>
 </ul>
 </div>
 </div>
@@ -3540,13 +3552,13 @@ original models</h2>
 <ul>
 <li>simple model
 <ul>
-<li>Accuracy : 78.69%</li>
-<li>Kappa : 0.4239</li>
+<li>Accuracy : 78.52%</li>
+<li>Kappa : 0.4229</li>
 </ul></li>
 <li>auto-tuned model
 <ul>
-<li>Accuracy: 79.38%</li>
-<li><strong>Kappa: 0.4281</strong></li>
+<li>Accuracy: 79.32%</li>
+<li><strong>Kappa: 0.4334</strong></li>
 </ul></li>
 </ul>
 <p>Second-level Decision Tree (simple model)</p>
@@ -3568,7 +3580,7 @@ frame of combined predictions.</p>
                   &quot;KNN&quot; = knn_tuned_model,
                   &quot;ANN&quot; = ann_mid_pred,
                   &quot;Decision Tree&quot; = tree_pred,
-                  &quot;Random Forest&quot; = rf_tune_pred,
+                  &quot;Random Forest&quot; = rf_tune_pred_r,
                  &quot;labels&quot; = data_test_labels) # add y label</code></pre>
 </div>
 <div id="split-train-and-test-data-1" class="section level2" number="8.2">
@@ -3596,33 +3608,33 @@ confusionMatrix(as.factor(tree_preds_opt), as.factor(test_labels_opt), positive 
 ## 
 ##           Reference
 ## Prediction   0   1
-##          0 223  53
-##          1  28  48
+##          0 227  49
+##          1  24  52
 ##                                           
-##                Accuracy : 0.7699          
-##                  95% CI : (0.7223, 0.8128)
+##                Accuracy : 0.7926          
+##                  95% CI : (0.7465, 0.8338)
 ##     No Information Rate : 0.7131          
-##     P-Value [Acc &gt; NIR] : 0.009684        
+##     P-Value [Acc &gt; NIR] : 0.0004262       
 ##                                           
-##                   Kappa : 0.3927          
+##                   Kappa : 0.4527          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 0.007661        
+##  Mcnemar&#39;s Test P-Value : 0.0049698       
 ##                                           
-##             Sensitivity : 0.4752          
-##             Specificity : 0.8884          
-##          Pos Pred Value : 0.6316          
-##          Neg Pred Value : 0.8080          
+##             Sensitivity : 0.5149          
+##             Specificity : 0.9044          
+##          Pos Pred Value : 0.6842          
+##          Neg Pred Value : 0.8225          
 ##              Prevalence : 0.2869          
-##          Detection Rate : 0.1364          
+##          Detection Rate : 0.1477          
 ##    Detection Prevalence : 0.2159          
-##       Balanced Accuracy : 0.6818          
+##       Balanced Accuracy : 0.7096          
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
 <p>Second-level Decision Tree (optimized model)</p>
 <ul>
-<li>Accuracy : 77.84%</li>
-<li>Kappa : 0.4096</li>
+<li>Accuracy : 79.26%</li>
+<li>Kappa : 0.4527</li>
 </ul>
 <p>Second-level Decision Tree (simple model)</p>
 <ul>
@@ -3668,12 +3680,14 @@ would be predicted to leave.</p>
 <div id="build-error-cost-model" class="section level3" number="8.4.1">
 <h3><span class="header-section-number">8.4.1</span> Build Error Cost
 Model</h3>
-<p>For the cost, we assigned 2 for false negatives and 1 for false
+<p>We want to reduce the false negatives since losing customers who were
+predicted to not leave would bring damage to the company.</p>
+<p>For the cost, we assigned 5 for false negatives and 1 for false
 positives.</p>
-<pre class="r"><code>error_cost = matrix(c(0,1,2,0), nrow=2) # Cost - FN=8, FP=1. TP and TN don&#39;t have costs, so 0.
+<pre class="r"><code>error_cost = matrix(c(0,1,5,0), nrow=2) # Cost - FN=5, FP=1. TP and TN don&#39;t have costs, so 0.
 error_cost</code></pre>
 <pre><code>##      [,1] [,2]
-## [1,]    0    2
+## [1,]    0    5
 ## [2,]    1    0</code></pre>
 <pre class="r"><code># build decision tree model with error cost
 errormodel &lt;- C5.0(as.factor(train_labels_combined) ~ ., data = train_combined, costs = error_cost)</code></pre>
@@ -3687,36 +3701,35 @@ confusionMatrix(as.factor(errorpred), as.factor(test_labels_combined), positive 
 ## 
 ##           Reference
 ## Prediction   0   1
-##          0 216  31
-##          1  35  70
+##          0 206  28
+##          1  45  73
 ##                                           
-##                Accuracy : 0.8125          
-##                  95% CI : (0.7677, 0.8519)
+##                Accuracy : 0.7926          
+##                  95% CI : (0.7465, 0.8338)
 ##     No Information Rate : 0.7131          
-##     P-Value [Acc &gt; NIR] : 1.181e-05       
+##     P-Value [Acc &gt; NIR] : 0.0004262       
 ##                                           
-##                   Kappa : 0.5472          
+##                   Kappa : 0.5175          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 0.7119          
+##  Mcnemar&#39;s Test P-Value : 0.0611156       
 ##                                           
-##             Sensitivity : 0.6931          
-##             Specificity : 0.8606          
-##          Pos Pred Value : 0.6667          
-##          Neg Pred Value : 0.8745          
+##             Sensitivity : 0.7228          
+##             Specificity : 0.8207          
+##          Pos Pred Value : 0.6186          
+##          Neg Pred Value : 0.8803          
 ##              Prevalence : 0.2869          
-##          Detection Rate : 0.1989          
-##    Detection Prevalence : 0.2983          
-##       Balanced Accuracy : 0.7768          
+##          Detection Rate : 0.2074          
+##    Detection Prevalence : 0.3352          
+##       Balanced Accuracy : 0.7717          
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
-<p>As a result, the number of false negatives was decreased to 31 (was
-46) while the number of false positives increased to 35 (was 27).</p>
-<p>The accuracy and the kappa increased to 81.25% and 0.5472
-respectively.</p>
+<p>As a result, the number of false negatives was decreased to 28 (was
+46) while the number of false positives increased to 45 (was 27).</p>
+<p>The accuracy remained same and the kappa increased to 0.5175.</p>
 <ul>
-<li>Accuracy: 81.25%</li>
-<li>Kappa: 0.5472</li>
+<li>Accuracy: 79.26%</li>
+<li>Kappa: 0.5175</li>
 </ul>
 </div>
 </div>
