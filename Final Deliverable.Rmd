@@ -110,7 +110,7 @@ churn_breakdown <- data %>%
    rename(customers = n)
  churn_breakdown
  
-prop.table(table(data$gender, data$Churn), 1)
+round(prop.table(table(data$gender, data$Churn), 1), 3)
  
 # Churn rate by gender
 ggplot(data = data, aes(x=gender, fill =  Churn)) + geom_bar(position = "fill", width=0.45) + 
@@ -125,6 +125,8 @@ ggplot(data = data, aes(x=gender, fill =  Churn)) + geom_bar(position = "fill", 
  
 ggplot(data = data, aes(x = gender, y = MonthlyCharges, fill = gender))+geom_boxplot() + stat_summary(fun=mean, geom="point", shape=20, size=8, color="red", fill="red")
 ```
+The existing churn rate of 26.54% indicates that there is a need for action to reduce customer churn. 
+A high churn rate indicates that a significant percentage of customers are leaving the company, which can result in several negative impacts, such as increased costs of acquiring new customers and reduced revenue due to customers leaving for competitors. Therefore, it is essential for telecom companies to take proactive measures to reduce customer churn and retain their existing customer base.
  
 ## Get Data
 ```{r}
@@ -268,6 +270,7 @@ table(lr_binary_pred)
 With the confusionMatrix, we evaluated our prediction from the logistic regression model.
 ```{r}
 library(caret)
+library(gmodels)
 confusionMatrix(as.factor(lr_binary_pred), as.factor(data_test_labels), positive = "1")
 
 #CrossTable(x = as.factor(data_test_labels), y = lr_binary_pred, 
@@ -377,7 +380,7 @@ print(rf_base_model)
 rf_pred_r <- read.csv("rf_pred.csv")
 confusionMatrix(as.factor(rf_pred_r$x), as.factor(data_test_labels), positive="1")
 
-#CrossTable(x = as.factor(data_test_labels), y = rf_pred, 
+#CrossTable(x = as.factor(data_test_labels), y = rf_pred_r$x, 
 #          prop.chisq=FALSE)
 ```
 
@@ -427,8 +430,8 @@ tree_preds_combined <- predict(tree_model_combined, test_combined)
 library(caret)
 confusionMatrix(as.factor(tree_preds_combined), as.factor(test_labels_combined), positive = "1")
 
-#CrossTable(x = as.factor(test_labels_combined), y = tree_preds_combined, 
-#          prop.chisq=FALSE)
+CrossTable(x = as.factor(test_labels_combined), y = tree_preds_combined, 
+          prop.chisq=FALSE)
 ```
 
 
@@ -793,3 +796,16 @@ The accuracy remained same and the kappa increased to 0.5175.
 
 - Accuracy: 79.26%
 - Kappa: 0.5175
+
+# Conclusion and Recommendations
+
+Reducing customer churn is a significant challenge for telecom companies, as it impacts their revenue and profitability. Through the use of machine learning models and churn analytics, telecom companies can identify customers at risk of churning and take proactive measures to retain them.
+
+Based on our analysis of the "Telco Customer Churn" dataset from Kaggle, we recommend that telecom companies adopt the second-level decision tree models to improve their accuracy and kappa coefficients. Additionally, we found that several variables, including Tenure, Contract, Paperless billing, Paid by electronic check, and Total charges, have a statistically significant effect on customer churn. These factors can serve as reference points for developing targeted retention strategies for at-risk customers. In particular, customers in a month-contract, with a shorter tenure, using paperless billing, and paid by electronic check are more likely to churn.
+
+Further, from an economic standpoint, it is in the best interest of telecom companies to minimize false negatives, i.e., correctly identifying all customers who are likely to churn. We recommend that companies explore the use of KNN and Decision Tree models, as these models perform well in this regard.
+
+
+However, it is essential to note that implementing these models involves some risks, such as data comprehensiveness, incorrect predictions, and implementation costs. To mitigate the risks, it is crucial to develop a holistic risk management plan, ensure that the models' output is accurate, and estimate the costs of implementation. Moreover, regularly communicating with high-risk customers, understanding their needs, addressing their issues, and providing proactive solutions can help retain them. Monitoring customer feedback and reviews can help companies identify issues and make informed decisions to improve their products and services.
+
+By implementing the recommendations and managing the risks, telecom companies can improve their customer retention and profitability while maintaining customer trust and satisfaction.
